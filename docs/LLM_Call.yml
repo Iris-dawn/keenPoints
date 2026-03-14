@@ -1,0 +1,1317 @@
+app:
+  description: 各种模型调用以及system prompt管理
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: LLM_Call
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/aihubmix:0.0.21@64b439d518f99d87f63052596e328a702cd6331675d9ee7d16053be8e2421409
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.0.55@1a9fdefce7eec061c32831f59736cd3ca91e1198c1d345c1991de3cb8f541ed4
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: if-else
+      id: 1765957305652-source-1765957381177-target
+      source: '1765957305652'
+      sourceHandle: source
+      target: '1765957381177'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1765957381177-true-1765957410892-target
+      source: '1765957381177'
+      sourceHandle: 'true'
+      target: '1765957410892'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1765957410892-source-1765957476330-target
+      source: '1765957410892'
+      sourceHandle: source
+      target: '1765957476330'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1765957381177-58cb99f5-d84e-442f-963b-d1d26a1bf87c-1765957822471-target
+      source: '1765957381177'
+      sourceHandle: 58cb99f5-d84e-442f-963b-d1d26a1bf87c
+      target: '1765957822471'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1765957822471-source-1765958742641-target
+      source: '1765957822471'
+      sourceHandle: source
+      target: '1765958742641'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1765957381177-0e0a5039-c948-42c4-89af-09e6f09de70e-1765963382239-target
+      source: '1765957381177'
+      sourceHandle: 0e0a5039-c948-42c4-89af-09e6f09de70e
+      target: '1765963382239'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1765963382239-source-1765963499795-target
+      source: '1765963382239'
+      sourceHandle: source
+      target: '1765963499795'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1765957381177-false-1766125367846-target
+      source: '1765957381177'
+      sourceHandle: 'false'
+      target: '1766125367846'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1766125367846-source-1766125564106-target
+      source: '1766125367846'
+      sourceHandle: source
+      target: '1766125564106'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1765957381177-af2f6392-2831-48e5-9689-468e695341d3-1767850581084-target
+      source: '1765957381177'
+      sourceHandle: af2f6392-2831-48e5-9689-468e695341d3
+      target: '1767850581084'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1767850581084-source-1767850702278-target
+      source: '1767850581084'
+      sourceHandle: source
+      target: '1767850702278'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1765957381177-5c0c9d03-9827-4c32-a5cd-c2ec6b76f5eb-1773308495830-target
+      source: '1765957381177'
+      sourceHandle: 5c0c9d03-9827-4c32-a5cd-c2ec6b76f5eb
+      target: '1773308495830'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1773308495830-source-1773308683961-target
+      source: '1773308495830'
+      sourceHandle: source
+      target: '1773308683961'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1765957381177-5428fda8-8c33-4b7a-bf8d-e536d287ab0a-1773308886260-target
+      source: '1765957381177'
+      sourceHandle: 5428fda8-8c33-4b7a-bf8d-e536d287ab0a
+      target: '1773308886260'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1773308886260-source-1773308949185-target
+      source: '1773308886260'
+      sourceHandle: source
+      target: '1773308949185'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - default: ''
+          hint: ''
+          label: llm_id
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: true
+          type: number
+          variable: llm_id
+        - default: ''
+          hint: ''
+          label: user_prompt
+          max_length: 50000
+          options: []
+          placeholder: ''
+          required: true
+          type: paragraph
+          variable: user_prompt
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - image
+          allowed_file_upload_methods:
+          - local_file
+          default: ''
+          hint: ''
+          label: imags
+          max_length: 5
+          options: []
+          placeholder: ''
+          required: false
+          type: file-list
+          variable: images
+      height: 159
+      id: '1765957305652'
+      position:
+        x: 0
+        y: 238
+      positionAbsolute:
+        x: 0
+        y: 238
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: '='
+            id: f04bdba1-8014-4bdc-82a1-ead7f3dd86a6
+            value: '1'
+            varType: number
+            variable_selector:
+            - '1765957305652'
+            - llm_id
+          id: 'true'
+          logical_operator: and
+        - case_id: 58cb99f5-d84e-442f-963b-d1d26a1bf87c
+          conditions:
+          - comparison_operator: '='
+            id: 7b312793-3550-4c52-9d35-c18cee352bb4
+            value: '2'
+            varType: number
+            variable_selector:
+            - '1765957305652'
+            - llm_id
+          id: 58cb99f5-d84e-442f-963b-d1d26a1bf87c
+          logical_operator: and
+        - case_id: 0e0a5039-c948-42c4-89af-09e6f09de70e
+          conditions:
+          - comparison_operator: '='
+            id: 1e6a55eb-e828-4e5b-a079-2664797495be
+            value: '3'
+            varType: number
+            variable_selector:
+            - '1765957305652'
+            - llm_id
+          id: 0e0a5039-c948-42c4-89af-09e6f09de70e
+          logical_operator: and
+        - case_id: af2f6392-2831-48e5-9689-468e695341d3
+          conditions:
+          - comparison_operator: '='
+            id: 98b12ac6-f712-465e-8db7-40fbeb2c8947
+            value: '4'
+            varType: number
+            variable_selector:
+            - '1765957305652'
+            - llm_id
+          id: af2f6392-2831-48e5-9689-468e695341d3
+          logical_operator: and
+        - case_id: 5c0c9d03-9827-4c32-a5cd-c2ec6b76f5eb
+          conditions:
+          - comparison_operator: '='
+            id: 54585e83-ff54-4104-b3f9-d5853ef5f3ed
+            value: '5'
+            varType: number
+            variable_selector:
+            - '1765957305652'
+            - llm_id
+          id: 5c0c9d03-9827-4c32-a5cd-c2ec6b76f5eb
+          logical_operator: and
+        - case_id: 5428fda8-8c33-4b7a-bf8d-e536d287ab0a
+          conditions:
+          - comparison_operator: '='
+            id: 6be294e6-1078-40cf-b33b-d78fb77ac4af
+            value: '6'
+            varType: number
+            variable_selector:
+            - '1765957305652'
+            - llm_id
+          logical_operator: and
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 362
+      id: '1765957381177'
+      position:
+        x: 342
+        y: 183.4842834334895
+      positionAbsolute:
+        x: 342
+        y: 183.4842834334895
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v3.2-exp
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 3cda7a9a-1ee2-4faa-b0cd-c9fd1e248eda
+          role: system
+          text: "You are a professional academic document analysis agent. Your task\
+            \ is to deeply understand scientific paper content and produce accurate\
+            \ structured summaries.\n\nInput fields:\n- abstract: the abstract of\
+            \ the paper\n- name: the section title\n- content: the section text content\n\
+            - previous_parts_summary (optional): if this section is split into multiple\
+            \ parts, this field contains summaries of previous parts\n\nYour job:\n\
+            1. Read the paper abstract to obtain global context and focus of the study.\n\
+            2. If previous_parts_summary is provided, use it to understand the context\
+            \ from earlier parts of this section.\n3. Analyze the given section (name\
+            \ + content).\n4. Provide a structured summary including:\n   - key research\
+            \ purpose of this section\n   - major findings or arguments\n   - core\
+            \ methods, models, or assumptions\n   - logical conclusions or claims\n\
+            \   - critical keywords and concepts\n\nRules:\n- If the section content\
+            \ is longer than the available context, summarize only based on the provided\
+            \ part.\n- If previous_parts_summary is provided, build upon that context\
+            \ and continue the analysis seamlessly.\n- The tone must be rigorous,\
+            \ concise, and academic.\n- Do not add any new information that does not\
+            \ exist in the input.\n\nFormula and notation formatting rules:\n- If\
+            \ formulas, mathematical symbols, or expressions appear in the summary\
+            \ or key points, they must be formatted using valid Markdown-compatible\
+            \ LaTeX.\n- Inline formulas must use single dollar signs, e.g., `$L(w)$`.\n\
+            - Block formulas must use double dollar signs, e.g.:\n  $$\n  \\min_w\
+            \ \\\\mathcal{L}(w)\n  $$\n- Do not output raw LaTeX control characters,\
+            \ broken escape sequences, or non-UTF-8 symbols.\n- Do not output formulas\
+            \ in plain text form if LaTeX formatting is applicable.\n- Ensure all\
+            \ mathematical expressions are readable and renderable in standard Markdown\
+            \ environments.\n\nOutput format:\nReturn a valid JSON with the following\
+            \ structure:\n\n{\n  \"section_name\": string,\n  \"summary\": string,\n\
+            \  \"key_points\": [string]\n}\n\nNotes:\n- Fields must always be present;\
+            \ if a field cannot be derived, return an empty string or empty list.\n\
+            - All text content inside the JSON must be Markdown-compatible.\n- JSON\
+            \ must be fully valid, properly escaped, and free of encoding issues.\n"
+        - id: f0177631-4b72-44ec-8263-55c0dd27f680
+          role: user
+          text: '{{#1765957305652.user_prompt#}}'
+        reasoning_format: separated
+        selected: false
+        title: 论文解析
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1765957410892'
+      position:
+        x: 703
+        y: 1
+      positionAbsolute:
+        x: 703
+        y: 1
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1765957410892'
+          - text
+          value_type: string
+          variable: text
+        selected: false
+        title: 输出
+        type: end
+      height: 87
+      id: '1765957476330'
+      position:
+        x: 1044
+        y: 0
+      positionAbsolute:
+        x: 1044
+        y: 0
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen-vl-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: ed42c5b4-0e0e-4da6-b1d5-2f3d693e1185
+          role: system
+          text: "You are an academic visual-element interpretation agent.\n\nYour\
+            \ task is to interpret equations, tables, and figures in scientific papers\
+            \ and generate concise, presentation-ready analytical text.\n\nInput fields:\n\
+            - abstract: the abstract of the paper\n- element: an object representing\
+            \ a visual element, including:\n  - type: \"equation\" | \"table\" | \"\
+            image\"\n  - id: unique identifier\n  - img_path: image file path (may\
+            \ be empty for equations)\n  - caption: caption text (may be empty)\n\
+            \  - text: equation content in LaTeX format (only for type=\"equation\"\
+            )\n  - text_format: format of the equation text\n  - body: HTML table\
+            \ body (only for type=\"table\")\n- local_context: paragraphs surrounding\
+            \ where the element is referenced\n- section_content: full text of the\
+            \ section containing the element\n\nYour objectives:\n1. Understand the\
+            \ role and purpose of the visual element using the abstract, local_context,\
+            \ and section_content.\n2. Interpret the element strictly based on the\
+            \ provided information.\n3. Produce a clear analytical description suitable\
+            \ for academic presentation slides or narration.\n\nElement-specific interpretation\
+            \ requirements:\n\nFor equations:\n- Explain the purpose of the equation\
+            \ within the method or theory.\n- Describe the optimization goal or mathematical\
+            \ objective.\n- Explain the role of key variables at a conceptual level.\n\
+            - Avoid step-by-step derivations.\n\nFor tables:\n- Describe what the\
+            \ table compares or measures.\n- Identify key metrics and dominant trends.\n\
+            - Summarize the main conclusions supported by the data.\n\nFor images\
+            \ (figures):\n- Describe what the figure illustrates based on caption\
+            \ and context.\n- Identify visible trends, comparisons, or patterns.\n\
+            - Explain how the figure supports the section’s argument or claim.\n-\
+            \ Do NOT describe visual appearance details unless they convey meaning.\n\
+            \nRules:\n- Do NOT invent data, values, variables, or conclusions.\n-\
+            \ If the image content is unavailable, rely only on caption and textual\
+            \ references.\n- Maintain an objective, academic, and concise tone.\n\
+            - Focus on interpretation and meaning, not narration structure.\n\nOutput\
+            \ format (strict):\nReturn a valid JSON object with the following structure:\n\
+            \n{\n  \"element_id\": number,\n  \"element_type\": string,\n  \"analysis_text\"\
+            : string\n}\n\nOutput constraints:\n- element_id and element_type must\
+            \ exactly match the input.\n- analysis_text must be a coherent paragraph\
+            \ or short multi-sentence block.\n- The text must be directly usable in\
+            \ PPT content or speaker narration.\n- All fields must be present.\n-\
+            \ Output JSON only.\n- Do NOT include markdown, code blocks, or extra\
+            \ explanations.\n"
+        - id: b6407f38-4102-40c9-8388-ac71a9af9b22
+          role: user
+          text: '{{#1765957305652.user_prompt#}}'
+        reasoning_format: separated
+        selected: false
+        title: 图像分析
+        type: llm
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - '1765957305652'
+            - images
+          enabled: true
+      height: 86
+      id: '1765957822471'
+      position:
+        x: 703
+        y: 168
+      positionAbsolute:
+        x: 703
+        y: 168
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1765957822471'
+          - text
+          value_type: string
+          variable: text
+        selected: false
+        title: 输出 2
+        type: end
+      height: 87
+      id: '1765958742641'
+      position:
+        x: 1044
+        y: 167
+      positionAbsolute:
+        x: 1044
+        y: 167
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v3
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 7550d390-70ff-4747-bdf6-3a2151e8befd
+          role: system
+          text: 'You are a professional academic presentation planning agent.
+
+            Your task is to design a clear and logical PowerPoint (PPT) outline for
+            a scientific paper section.
+
+            Your output must strictly follow the required JSON format.
+
+            Slide Role Definition
+
+            Each slide must be assigned a presentation role describing its narrative
+            function in the research presentation.
+
+            You must choose the role ONLY from the following 14 predefined roles:
+
+            hook_context
+
+            related_work
+
+            problem_definition
+
+            gap_limitations
+
+            insight_thesis
+
+            overview_figure
+
+            method_overview
+
+            method_component
+
+            theoretical
+
+            experiment_setup
+
+            results
+
+            analysis_ablation
+
+            takeaways
+
+            limitation_future
+
+            Role descriptions:
+
+            hook_context: research background or motivation introduction, low information
+            density
+
+            related_work: literature review or comparison with prior work
+
+            problem_definition: formal definition of the research problem
+
+            gap_limitations: limitations or gaps in existing methods
+
+            insight_thesis: key insight or contribution summary
+
+            overview_figure: overall method diagram explanation
+
+            method_overview: overall architecture of the proposed method
+
+            method_component: detailed explanation of a specific module
+
+            theoretical: theoretical derivation, proof, or complexity analysis
+
+            experiment_setup: datasets, baselines, metrics, or training settings
+
+            results: main experimental results or comparisons
+
+            analysis_ablation: ablation studies or deeper analysis
+
+            takeaways: conclusion or main contributions recap
+
+            limitation_future: limitations and future work discussion
+
+            Important constraints:
+
+            The role value MUST be exactly one of the 14 roles above.
+
+            Do NOT invent new role names.
+
+            Do NOT leave the role field empty.
+
+            Input fields
+
+            abstract: the abstract of the paper
+
+            section_name: the title of the paper section
+
+            content: the full text of the section
+
+            refs: referenced visual elements
+
+            refs contains:
+
+            images: list of objects
+
+            id: numeric image ID
+
+            analyze_text: explanation of the image
+
+            equations: list of objects
+
+            id: numeric equation ID
+
+            analyze_text: explanation of the equation
+
+            tables: list of objects
+
+            id: numeric table ID
+
+            analyze_text: explanation of the table
+
+            Your objectives
+
+            Use the abstract to understand the overall research context.
+
+            Analyze the section content to identify the key presentation ideas.
+
+            Plan one or multiple PPT slides for the section.
+
+            Determine slide titles, roles, purposes, content points, and referenced
+            visual elements.
+
+            Planning rules
+
+            Slides must follow a clear narrative order.
+
+            Each slide must focus on a single coherent idea.
+
+            Slides must reflect the rhetorical structure of a research presentation.
+
+            Do NOT introduce information that does not exist in the input.
+
+            Visual elements must only be referenced if they directly support the slide.
+
+            Do NOT fabricate, rename, or modify visual element IDs.
+
+            Visual reference constraints
+
+            visual_refs must contain ONLY numeric IDs from the provided refs.
+
+            Do NOT generate new IDs.
+
+            Use empty arrays if no visual elements are needed.
+
+            Output format (STRICT)
+
+            You must output ONLY a valid raw JSON object.
+
+            Do NOT include explanations, text, labels, markdown, or formatting.
+
+            The first character of your output must be {.
+
+            The last character of your output must be }.
+
+            Any violation of this rule is considered incorrect output.
+
+            Required JSON structure
+
+            {
+
+            "section_name": string,
+
+            "ppt_outline": [
+
+            {
+
+            "slide_title": string,
+
+            "role": string,
+
+            "slide_purpose": string,
+
+            "content_points": [string],
+
+            "visual_refs": {
+
+            "images": [number],
+
+            "equations": [number],
+
+            "tables": [number]
+
+            }
+
+            }
+
+            ]
+
+            }
+
+            Field constraints
+
+            All fields must be present.
+
+            role must be exactly one of the 14 predefined roles.
+
+            content_points must contain between 2 and 5 items.
+
+            visual_refs must always contain the three fields:
+
+            images, equations, tables.
+
+            Use empty arrays if no visual elements are required.
+
+            JSON must be valid and correctly structured.
+
+            Final instruction
+
+            Return JSON only.
+
+            No markdown.
+
+            No code fences.
+
+            No extra text.
+
+            Only output the JSON object.'
+        - id: 84475605-873e-4f33-a0a8-342e33b9c9ee
+          role: user
+          text: '{{#1765957305652.user_prompt#}}'
+        selected: false
+        structured_output_enabled: true
+        title: PPT大纲生成
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1765963382239'
+      position:
+        x: 703
+        y: 334
+      positionAbsolute:
+        x: 703
+        y: 334
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1765963382239'
+          - text
+          value_type: string
+          variable: text
+        selected: false
+        title: 输出 3
+        type: end
+      height: 87
+      id: '1765963499795'
+      position:
+        x: 1044
+        y: 334
+      positionAbsolute:
+        x: 1044
+        y: 334
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v3
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 6b8f3322-0330-456c-bc77-9dfeb0bc3c95
+          role: system
+          text: "You are an academic metadata extraction agent.\n\nInput:\n- text:\
+            \ academic paper text\n\nTask:\nExtract presentation cover metadata from\
+            \ the text.\n\nRules:\n- Only extract information explicitly present in\
+            \ the text.\n- Do NOT infer, generate, rewrite, or translate.\n- If a\
+            \ field is missing, return an empty string or empty list.\n- Preserve\
+            \ original wording and author order.\n\nOutput requirements:\n- Output\
+            \ ONLY a single JSON object.\n- Do NOT wrap the output in ```json or any\
+            \ other markdown.\n- Do NOT include any extra text, explanations, or formatting.\n\
+            \nOutput format (must match exactly):\n\n{\n  \"title\": string,\n  \"\
+            subtitle\": string,\n  \"authors\": [string],\n  \"affiliation\": string,\n\
+            \  \"date\": string\n}\n"
+        - id: 8d5de0e9-7db0-4783-9b44-1f25ff3a20d5
+          role: user
+          text: '{{#1765957305652.user_prompt#}}'
+        selected: false
+        structured_output_enabled: false
+        title: 便捷调用
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1766125367846'
+      position:
+        x: 711.2587766493572
+        y: 937.3741654660548
+      positionAbsolute:
+        x: 711.2587766493572
+        y: 937.3741654660548
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1766125367846'
+          - text
+          value_type: string
+          variable: text
+        selected: false
+        title: 输出 else
+        type: end
+      height: 87
+      id: '1766125564106'
+      position:
+        x: 1061.4402014280297
+        y: 937.3741654660548
+      positionAbsolute:
+        x: 1061.4402014280297
+        y: 937.3741654660548
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        author: yangchen
+        desc: ''
+        height: 88
+        selected: false
+        showAuthor: true
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"llm_id
+          = 4 outline reducer","type":"text","version":1}],"direction":null,"format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":null,"format":"","indent":0,"type":"root","version":1}}'
+        theme: blue
+        title: ''
+        type: ''
+        width: 240
+      height: 88
+      id: '1767850533075'
+      position:
+        x: 348.0116459991935
+        y: 411.0313942405896
+      positionAbsolute:
+        x: 348.0116459991935
+        y: 411.0313942405896
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 240
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-5.2
+          provider: langgenius/aihubmix/aihubmix
+        prompt_template:
+        - id: e3499cb4-c957-4c85-a9d2-9c6f21a46abd
+          role: system
+          text: 'You are an expert HTML/CSS developer specializing in academic conference
+
+            presentation slides (960×540 px canvas).
+
+
+            Your single responsibility: given a structured slide specification in
+
+            user_prompt, produce a self-contained, valid <!DOCTYPE html> HTML document
+
+            that faithfully follows the supplied template.
+
+
+            CANVAS
+
+              • The slide container (.slide) is always exactly 960 px wide × 540 px
+            tall.
+
+              • Use position:absolute for all content blocks. Never rely on page scroll.
+
+              • All content, decorations, and text MUST be fully visible within 960×540.
+
+
+
+            COLORS
+
+              • Define ALL colour values as CSS variables in :root (names supplied
+            in prompt).
+
+              • Never hard-code hex values in content-area rules — always use var(--name).
+
+              • SVG fill/stroke attributes are the only exception (they cannot use
+            var()).
+
+
+
+            SHELL SNIPPET
+
+              • The decorative shell HTML is provided verbatim in the prompt.
+
+              • Copy it character-for-character into <body><div class="slide">. Do
+            NOT
+
+                modify, reorder, or omit any element.
+
+
+
+            CSS ARCHITECTURE
+
+              • Mandatory base classes (always include):
+
+                  :root          — colour variables
+
+                  body           — margin:0; display:flex; justify-content:center;
+
+                                   align-items:center; min-height:100vh; background:#6d6d6d
+
+                  .slide         — position:relative; width:960px; height:540px;
+
+                                   overflow:hidden; background-color:var(--lt2)
+
+                  .shape         — position:absolute; overflow:hidden
+
+                  .img-fit       — width:100%; height:100%; object-fit:contain; display:block
+
+                  .divider-line  — position:absolute; left:35px; width:890px; height:1px;
+
+                                   border-top:1px solid var(--accent3)
+
+                  .slide-section — position:absolute; left:0; top:12px; width:25px;
+
+                                   height:55px; z-index:10; color:var(--lt1);
+
+                                   font-size:28px; font-weight:bold
+
+                  .slide-title   — position:absolute; left:60px; top:15px; right:200px;
+
+                                   height:45px; display:flex; align-items:center;
+            z-index:10
+
+                  .slide-title h1 — margin:0; font-size:28px; color:var(--accent1);
+
+                                    font-weight:bold; line-height:1.2
+
+                  .slide-footer-info — position:absolute; right:40px; bottom:15px;
+
+                                       font-size:12px; color:var(--accent5); z-index:10
+
+              • Content-area CSS goes after the base block. Keep z-index ≥ 5 for
+
+                content overlapping the shell.
+
+
+
+            LAYOUT
+
+              • The prompt specifies the layout type and provides a CSS skeleton.
+
+              • Treat the skeleton as a reference. Adapt font sizes and spacing so
+            all
+
+                content fits within height without overflow.
+
+              • Preserve the two-column proportions defined in the skeleton.
+
+
+
+            TYPOGRAPHY
+
+              • Font stack: ''Microsoft YaHei'', ''Segoe UI'', Arial, sans-serif
+
+              • Body text   : 13–15 px;  line-height 1.5–1.6
+
+              • Bullet items: wrap text rather than overflowing; reduce font-size
+            if needed
+
+              • Heading h1  : 24–28 px (already in .slide-title)
+
+
+
+            EQUATIONS  (layout = equation)
+
+              • Load MathJax v3 in <head>:
+
+                  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+              • Wrap each LaTeX expression in $$ … $$
+
+
+
+            IMAGES  (layout = text_image | figure_focus)
+
+              • Use exactly the src paths provided in the prompt (already relative).
+
+              • Wrap in .image-frame; add <p class="image-caption"> below if caption
+            given.
+
+              • Set max-width:100%; max-height:100%; object-fit:contain on <img>.
+
+
+
+            TABLES  (layout = table_result)
+
+              • Render from the TABLE DATA JSON — do not omit columns or rows.
+
+              • Apply thead/tbody distinction; stripe even rows; highlight rows if
+            indicated.
+
+
+
+            OUTPUT FORMAT
+
+              • Return ONLY the complete HTML document.
+
+              • First line must be exactly: <!DOCTYPE html>
+
+              • Last line must be exactly: </html>
+
+              • No markdown code fences (``` or ~~~).
+
+              • No comments outside the HTML document.
+
+              • No apologies, explanations, or preamble text.'
+        - id: 9efd403a-3390-4274-8888-e51f97f23671
+          role: user
+          text: '{{#1765957305652.user_prompt#}}'
+        selected: false
+        title: HTML Generation
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1767850581084'
+      position:
+        x: 711.2587766493572
+        y: 471.30731810898544
+      positionAbsolute:
+        x: 711.2587766493572
+        y: 471.30731810898544
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1767850581084'
+          - text
+          value_type: string
+          variable: text
+        selected: false
+        title: 输出 5
+        type: end
+      height: 87
+      id: '1767850702278'
+      position:
+        x: 1061.4402014280297
+        y: 471.30731810898544
+      positionAbsolute:
+        x: 1061.4402014280297
+        y: 471.30731810898544
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4.1-nano-free
+          provider: langgenius/aihubmix/aihubmix
+        prompt_template:
+        - id: 42dfc851-6c8e-4950-8d19-19b6b1b1bf38
+          role: system
+          text: 'TASK: Generate a schematic diagram / concept illustration for an
+            academic presentation slide.
+
+
+            SLIDE TITLE    : {slide_title}
+
+            SLIDE PURPOSE  : {slide_purpose}
+
+            SLIDE ROLE     : {role}
+
+            KEY CONCEPTS   : {content_points joined}
+
+
+            REQUIREMENTS:
+
+            - Clean academic style, white or light grey background
+
+            - Vector-like flat design, BIT color palette: #2B4663 (dark blue), #5C7885
+            (mid-blue), #B9CAE1 (light blue)
+
+            - No photograph, no freehand drawing — use boxes, arrows, labels, nodes
+
+            - Size: 800×480 px
+
+            - Chinese or English labels matching the slide language
+
+            - Visual type: {image_type}   ← e.g. "directed_graph", "comparison_chart",
+            "flowchart", "infographic"'
+        - id: 30ce6f09-69d3-4ea8-a6d8-ccf7ec8581af
+          role: user
+          text: '{{#1765957305652.user_prompt#}}'
+        selected: false
+        title: Image_Gen
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1773308495830'
+      position:
+        x: 711.2587766493572
+        y: 636.804892319579
+      positionAbsolute:
+        x: 711.2587766493572
+        y: 636.804892319579
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1773308495830'
+          - text
+          value_type: string
+          variable: image
+        selected: false
+        title: 输出 6
+        type: end
+      height: 87
+      id: '1773308683961'
+      position:
+        x: 1061.4402014280297
+        y: 636.804892319579
+      positionAbsolute:
+        x: 1061.4402014280297
+        y: 636.804892319579
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v3
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: e6a551a0-32f3-4460-a7ee-39e9a7a3535c
+          role: system
+          text: "The following slide will display both a diagram and text bullets.\n\
+            The diagram already covers the structural/visual aspects.\nPlease rewrite\
+            \ the bullets to complement (not repeat) the diagram — \nfocus on interpretation,\
+            \ insight, or implication instead.\n\nSLIDE PURPOSE : {slide_purpose}\n\
+            DIAGRAM TYPE  : {image_type}\nORIGINAL BULLETS:\n{content_points}\n\n\
+            Output: {target_count} concise bullet strings as a JSON array. No markdown."
+        - id: 7016c961-5caf-4dac-a450-28997ad9ff25
+          role: user
+          text: '{{#1765957305652.user_prompt#}}'
+        selected: true
+        title: Text_Conpress
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1773308886260'
+      position:
+        x: 711.2587766493572
+        y: 781.966600661631
+      positionAbsolute:
+        x: 711.2587766493572
+        y: 781.966600661631
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1773308886260'
+          - text
+          value_type: string
+          variable: text
+        selected: false
+        title: 输出 7
+        type: end
+      height: 87
+      id: '1773308949185'
+      position:
+        x: 1069.856006176752
+        y: 781.966600661631
+      positionAbsolute:
+        x: 1069.856006176752
+        y: 781.966600661631
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    viewport:
+      x: -615.4402014280297
+      y: -228.30731810898544
+      zoom: 1
+  rag_pipeline_variables: []

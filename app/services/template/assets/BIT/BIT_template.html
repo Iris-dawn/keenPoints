@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>PPT Template Themed</title>
+    <style>
+        /* =========================================
+           1. 配色方案定义 (CSS Variables)
+           ========================================= */
+        :root {
+            /* 基础色彩 */
+            --dk1: #000000;
+            /* 正文主要文字 */
+            --lt1: #FFFFFF;
+            /* 反白文字/背景 */
+            --dk2: #E8EEF2;
+            /* 辅助深色背景 */
+            --lt2: #F9FAFB;
+            /* 幻灯片主背景 */
+
+            /* 强调色系 */
+            --accent1: #2B4663;
+            /* 主色：深蓝 (标题/左上角块) */
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            /* 分割线颜色 */
+            --accent4: #B9CAE1;
+            /* 辅色：浅蓝 (右侧条) */
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+            /* 次级文本颜色 */
+
+            /* 功能色 */
+            --hlink: #5FCBFB;
+            /* 超链接 */
+            --folHlink: #B759BC;
+            /* 已访问链接 */
+        }
+
+        /* =========================================
+           2. 全局重置与画布
+           ========================================= */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 幻灯片容器 (960x540) */
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            margin: 0 auto;
+            background-color: var(--lt2);
+            /* 应用背景色 */
+        }
+
+        /* 图片通用样式 */
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* 装饰元素定位 */
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        /* =========================================
+           3. 动态样式元素
+           ========================================= */
+
+        /* 顶部/底部 分割线 */
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 1px;
+            /* 这里用 border 实现，高度设为0或1均可配合 border */
+            border-top: 1px solid var(--accent3);
+            /* 应用 accent3 */
+            z-index: 2;
+        }
+
+        /* 左上角章节指示器 */
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            /* 应用白色文字 */
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        /* 页面标题 */
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 28px;
+            color: var(--accent1);
+            /* 应用主色 */
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        /* 主内容区域 */
+        .slide-content {
+            position: absolute;
+            top: 70px;
+            bottom: 50px;
+            left: 35px;
+            right: 35px;
+            z-index: 5;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .content-text {
+            font-size: 18px;
+            line-height: 1.5;
+            color: var(--dk1);
+            /* 应用正文色 */
+        }
+
+        .content-link {
+            color: var(--hlink);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .content-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .content-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: var(--accent6);
+            /* 使用次级深色 */
+        }
+
+        .content-list li::before {
+            content: "•";
+            color: var(--accent1);
+            /* 列表符号应用主色 */
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        /* 页脚信息 */
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            /* 页脚使用灰色系Accent */
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slide">
+
+        <!-- ==================== 装饰层 (SVG 颜色已绑定 Theme) ==================== -->
+
+        <!-- 1. 左上角装饰块 (Fill: accent1) -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                stroke-width="1" fill-rule="nonzero" />
+            <!-- 注意：SVG内部很难直接用 var()，这里保留了 hex #2B4663 以匹配 accent1 -->
+        </svg>
+
+        <!-- 2. 浅蓝装饰条 (Fill: accent4) -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+            <!-- Hex #B9CAE1 匹配 accent4 -->
+        </svg>
+
+        <!-- 3. 顶部分割线 (Border: accent3) -->
+        <div class="divider-line" style="top:64.7px;"></div>
+
+        <!-- 4. 底部分割线 (Border: accent3) -->
+        <div class="divider-line" style="top:493.2px;"></div>
+
+        <!-- 5. 右侧边缘装饰 (Bg: accent4) -->
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+
+
+        <!-- ==================== 图片占位区域 ==================== -->
+
+        <!-- [图片 A] 右上角 Logo -->
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="D:\MyFiles\AIPPT\Experiment\logo.png" alt="Logo" class="img-fit">
+        </div>
+
+        <!-- [图片 B] 左下角校训svg) -->
+        <div class="shape" style="left:45px; top:502px; width:200px; height:25px;">
+            <!-- 建议上传包含 accent3/accent4 色系的装饰图片 -->
+            <img src="D:\MyFiles\AIPPT\Experiment\校训.svg" alt="Bottom Decoration" class="img-fit"
+                style="object-position: left bottom;">
+        </div>
+
+
+        <!-- ==================== 可编辑内容 ==================== -->
+
+        <!-- 1. 章节号 -->
+        <div class="slide-section">
+            2
+        </div>
+
+        <!-- 2. 页面标题 -->
+        <div class="slide-title">
+            <h1>配色方案应用示例 (Theme Applied)</h1>
+        </div>
+
+        <!-- 3. 主内容区 -->
+        <div class="slide-content">
+
+            <div class="content-text">
+                本页面已严格按照配色表进行渲染。背景为 <b>lt2</b>，文字为 <b>dk1</b>。
+            </div>
+
+            <ul class="content-list">
+                <li>标题颜色：<span style="color:var(--accent1)">accent1 (#2B4663)</span></li>
+                <li>链接样式：<a href="#" class="content-link">hlink (#5FCBFB)</a></li>
+                <li>分割线颜色：<span style="color:var(--accent3)">accent3 (#94ACBC)</span></li>
+                <li>右侧装饰条：<span style="color:var(--accent4)">accent4 (#B9CAE1)</span></li>
+            </ul>
+
+            <div class="content-text" style="font-size: 14px; color: var(--accent2);">
+                备注：此模板保留了 960x540 的坐标系统，并支持图片替换 Logo 和底部装饰。
+            </div>
+
+        </div>
+
+        <!-- 4. 页脚信息 -->
+        <div class="slide-footer-info">
+            Page 2
+        </div>
+
+    </div>
+
+</body>
+
+</html>
