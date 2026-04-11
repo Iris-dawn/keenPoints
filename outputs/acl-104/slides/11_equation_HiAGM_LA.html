@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>HiAGM-LA: Label Attention Mechanism</title>
+    <script>
+        MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }, startup: { typeset: true } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+    <style>
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent1);
+            font-weight: bold;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        .content-col {
+            position: absolute;
+            left: 35px;
+            top: 72px;
+            width: 380px;
+            bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .col-divider {
+            position: absolute;
+            left: 425px;
+            top: 75px;
+            bottom: 55px;
+            width: 1px;
+            background: var(--accent4);
+            z-index: 5;
+        }
+
+        .eq-col {
+            position: absolute;
+            left: 435px;
+            top: 72px;
+            right: 25px;
+            bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            z-index: 5;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--lt1);
+            background: var(--accent1);
+            padding: 5px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .point {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .point .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent1);
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .point p {
+            margin: 0;
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: var(--dk1);
+        }
+
+        .point p em {
+            color: var(--accent1);
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .sep {
+            height: 1px;
+            background: var(--dk2);
+            margin: 2px 0;
+        }
+
+        .eq-card {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border: 1px solid var(--accent4);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .eq-header {
+            background: var(--accent1);
+            color: var(--lt1);
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .eq-body {
+            flex: 1;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .eq-note {
+            font-size: 11px;
+            color: var(--accent6);
+            line-height: 1.5;
+        }
+
+        .process-steps {
+            display: flex;
+            gap: 0;
+            margin-top: 8px;
+        }
+
+        .proc-step {
+            flex: 1;
+            text-align: center;
+            padding: 6px 4px;
+            background: var(--dk2);
+            font-size: 10.5px;
+            color: var(--accent1);
+            font-weight: bold;
+            line-height: 1.4;
+            border-right: 1px solid var(--accent4);
+        }
+
+        .proc-step:last-child {
+            border-right: none;
+        }
+
+        .proc-step span {
+            display: block;
+            font-weight: normal;
+            color: var(--accent6);
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- Decoration -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                fill-rule="nonzero" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+
+        <div class="slide-section">8</div>
+        <div class="slide-title">
+            <h1>HiAGM-LA: Label Attention Mechanism</h1>
+        </div>
+
+        <div class="content-col">
+            <div class="section-label">Inductive Variant</div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Document processed through <em>bidirectional GRU</em> for contextual features</p>
+            </div>
+            <div class="sep"></div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Multiple CNNs generate <em>n-gram features</em> with top-k max-pooling</p>
+            </div>
+            <div class="sep"></div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Output: continuous text representation $\boldsymbol{S}$ with dimension $d_c$</p>
+            </div>
+            <div class="sep"></div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Uses <em>multi-label attention</em> across hierarchy levels</p>
+            </div>
+            <div class="sep"></div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Learns label representations with <em>bidirectional hierarchical information</em></p>
+            </div>
+            <div class="sep"></div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Computes <em>label-wise attention values</em> for informative text features</p>
+            </div>
+            <div class="sep"></div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Produces <em>label-aligned text features</em> $\boldsymbol{v}_k$ for classifier input</p>
+            </div>
+        </div>
+
+        <div class="col-divider"></div>
+
+        <div class="eq-col">
+            <div class="eq-card">
+                <div class="eq-header">Eq. (5) — Multi-Label Attention</div>
+                <div class="eq-body">
+                    $$\alpha_{kj} = \frac{e^{\boldsymbol{s}_j \boldsymbol{h}_k^T}}{\displaystyle\sum_{j=1}^{n}
+                    e^{\boldsymbol{s}_j \boldsymbol{h}_k^T}}, \qquad \boldsymbol{v}_k = \sum_{i=1}^{n} \alpha_{ki}\,
+                    \boldsymbol{s}_i$$
+                    <div class="eq-note">
+                        $\alpha_{kj}$: attention weight of token $j$ for label $k$<br>
+                        $\boldsymbol{h}_k$: hierarchy-aware label embedding for label $k$<br>
+                        $\boldsymbol{s}_j$: text feature vector for token $j$<br>
+                        $\boldsymbol{v}_k$: label-aligned text representation used for predicting label $k$
+                    </div>
+                    <!-- Process steps -->
+                    <div class="process-steps">
+                        <div class="proc-step">Text Features $\boldsymbol{S}$<span>Bi-GRU + CNN</span></div>
+                        <div class="proc-step">Label Embed $\boldsymbol{h}_k$<span>Structure Encoder</span></div>
+                        <div class="proc-step">Attention $\alpha_{kj}$<span>Softmax dot-product</span></div>
+                        <div class="proc-step">Output $\boldsymbol{v}_k$<span>Label-aligned repr.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer-info">Page 12</div>
+    </div>
+</body>
+
+</html>

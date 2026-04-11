@@ -33,14 +33,28 @@ async def _apply_urls(session: aiohttp.ClientSession, files: List[str]) -> tuple
 
 
 async def _upload(session: aiohttp.ClientSession, file_path: str, url: str):
-    """Upload a single file."""
-    with open(file_path, "rb") as f:
-        async with session.put(url, data=f, headers={"Content-Type": ""}) as resp:
-            if resp.status == 200:
-                logger.info(f"{TAG} uploaded: {os.path.basename(file_path)}")
-            else:
-                text = await resp.text()
-                logger.error(f"{TAG} upload failed: {resp.status} - {text}")
+    """Upload a single file to the presigned OSS URL.
+
+    Notes:
+        - The presigned URL is signed with NO Content-Type (MinerU's backend uses
+          requests.put(url, data=f) which sends no Content-Type header).
+        - aiohttp automatically sets Content-Type: application/octet-stream for
+          bytes payloads, which breaks the OSS signature (403 SignatureDoesNotMatch).
+        - skip_auto_headers suppresses the automatic header so no Content-Type is sent,
+          matching the empty Content-Type used when the presigned URL was created.
+        - Must NOT use chunked transfer; bytes payload sets a fixed Content-Length.
+    """
+    file_bytes = Path(file_path).read_bytes()
+    async with session.put(
+        url,
+        data=file_bytes,
+        skip_auto_headers={"Content-Type"},
+    ) as resp:
+        if resp.status == 200:
+            logger.info(f"{TAG} uploaded: {os.path.basename(file_path)}")
+        else:
+            text = await resp.text()
+            raise Exception(f"Upload failed ({resp.status}): {text}")
 
 
 async def _poll(session: aiohttp.ClientSession, batch_id: str) -> List[dict]:
@@ -77,12 +91,19 @@ async def _download(session: aiohttp.ClientSession, items: List[dict], output_di
         target = Path(output_dir) / name
         target.mkdir(parents=True, exist_ok=True)
 
-        logger.info(f"{TAG} downloading: {item['full_zip_url']}")
-        async with session.get(item["full_zip_url"]) as resp:
-            if resp.status != 200:
-                logger.error(f"{TAG} download failed: {resp.status}")
-                continue
-            data = io.BytesIO(await resp.read())
+        zip_url = item["full_zip_url"]
+        logger.info(f"{TAG} downloading: {zip_url}")
+        # Use a separate plain session (no auth headers) with a timeout.
+        # CDN downloads can be slow; 300 s total socket read timeout.
+        timeout = aiohttp.ClientTimeout(total=300)
+        async with aiohttp.ClientSession(timeout=timeout) as cdn:
+            async with cdn.get(zip_url) as resp:
+                if resp.status != 200:
+                    text = await resp.text()
+                    raise Exception(
+                        f"Download failed ({resp.status}) for {item['file_name']}: {text[:200]}"
+                    )
+                data = io.BytesIO(await resp.read())
 
         with zipfile.ZipFile(data, "r") as zf:
             for member in zf.infolist():
@@ -98,7 +119,8 @@ async def _download(session: aiohttp.ClientSession, items: List[dict], output_di
 
 async def process_files(file_paths: List[str], output_dir: Optional[str] = None) -> List[dict]:
     """Process PDF files through MinerU pipeline."""
-    out = output_dir or settings.DOWNLOAD_DIR
+    # Use absolute path so the route handler can find files regardless of CWD.
+    out = output_dir or str(Path(settings.BASE_DIR) / settings.DOWNLOAD_DIR)
     async with aiohttp.ClientSession() as session:
         batch_id, urls = await _apply_urls(session, file_paths)
         for path, url in zip(file_paths, urls):

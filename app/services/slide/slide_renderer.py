@@ -7,6 +7,7 @@ and writes output to outputs/slides/<TemplateName>/.
 import json
 import os
 import re
+import shutil
 import time
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -18,7 +19,6 @@ from app.services.template import TemplateContent, get_template, list_templates
 
 TAG = "[RENDER]"
 
-_DEFAULT_INPUT = get_output_path(OUTPUT_FILES["enhanced_slides"])
 _DEFAULT_OUTPUT_BASE = Path(settings.BASE_DIR) / settings.OUTPUT_DIR / "slides"
 _ASSETS_BASE = Path(__file__).parent.parent / "template" / "assets"
 
@@ -166,9 +166,9 @@ class SlideRenderer:
                  image_src_prefix: Optional[str] = None):
         self.template = get_template(template_name)
         self.client = get_client()
-        self.input_json = input_json or _DEFAULT_INPUT
+        self.input_json = input_json or get_output_path(OUTPUT_FILES["enhanced_slides"])
         self.output_dir = output_dir or (_DEFAULT_OUTPUT_BASE / template_name)
-        self.images_dir = images_dir or Path(settings.BASE_DIR) / settings.DOWNLOAD_DIR
+        self.images_dir = images_dir or get_output_path("images")
         self.assets_dir = assets_dir or (_ASSETS_BASE / template_name)
         self.image_src_prefix = image_src_prefix
 
@@ -181,11 +181,21 @@ class SlideRenderer:
         filename = f"{index:02d}_{layout}_{slug}.html"
         out_path = self.output_dir / filename
 
-        assets = {
-            name: self._asset_rel(fname, out_path.parent)
-            for name, fname in self.template.asset_filenames.items()
-        }
-        img_base = self._resolve_img_prefix(out_path.parent)
+        # Copy template assets (logo, etc.) to the slide output dir so they
+        # resolve as simple filenames relative to the HTML file.
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        assets = {}
+        for name, fname in self.template.asset_filenames.items():
+            src = self.assets_dir / fname
+            if src.exists():
+                dst = self.output_dir / fname
+                if not dst.exists():
+                    shutil.copy2(src, dst)
+                assets[name] = fname   # just the filename — same directory
+            else:
+                assets[name] = fname
+
+        img_base = self._resolve_img_prefix()
         page_label = f"Page {index + 1}"
         prompt = _build_prompt(slide, layout, sec_num, page_label, assets, img_base, self.template)
 
@@ -221,22 +231,26 @@ class SlideRenderer:
         """Render all (or filtered) slides from the input JSON."""
         with self.input_json.open(encoding="utf-8") as f:
             data = json.load(f)
-        slides = data["slides"]
+        all_slides = data["slides"]
 
         if slide_id is not None:
-            slides = [s for s in slides if s.get("slide_id") == slide_id]
-            if not slides:
+            # Build a list of (original_seq, slide) so the filename uses the real position
+            pairs = [(i, s) for i, s in enumerate(all_slides) if s.get("slide_id") == slide_id]
+            if not pairs:
                 raise ValueError(f"No slide with slide_id={slide_id}")
         elif index is not None:
-            slides = [slides[index]]
+            pairs = [(index, all_slides[index])]
+        else:
+            pairs = list(enumerate(all_slides))
 
-        logger.info(f"{TAG} template={self.template.name} slides={len(slides)} → {self.output_dir}")
+        slides = [s for _, s in pairs]
+        logger.info(f"{TAG} template={self.template.name} slides={len(pairs)} → {self.output_dir}")
 
         generated = []
-        for seq, slide in enumerate(slides):
+        for i, (seq, slide) in enumerate(pairs):
             out = self.render_slide(slide, seq)
             generated.append(out)
-            if seq < len(slides) - 1:
+            if i < len(pairs) - 1:
                 time.sleep(delay)
 
         if generated:
@@ -246,6 +260,7 @@ class SlideRenderer:
         return generated
 
     def _asset_rel(self, filename, from_dir):
+        """Return relative or absolute path to a template asset file (legacy)."""
         asset = self.assets_dir / filename
         if asset.exists():
             try:
@@ -254,12 +269,21 @@ class SlideRenderer:
                 return str(asset).replace("\\", "/")
         return filename
 
-    def _resolve_img_prefix(self, from_dir):
+    def _resolve_img_prefix(self) -> str:
+        """Return absolute HTTP root-relative URL prefix for paper images.
+
+        Images are served at /outputs/<paper>/images/ by the FastAPI static mount.
+        If image_src_prefix is configured in settings, use that.
+        Otherwise, derive it from the images_dir relative to the backend root.
+        """
         configured = (self.image_src_prefix or settings.SLIDE_IMAGE_SRC_PREFIX or "").strip()
         if configured:
             return configured.rstrip("/")
+        # Compute URL-relative path: images_dir relative to BASE_DIR maps to the
+        # /downloads/ static mount.
         try:
-            return os.path.relpath(self.images_dir, from_dir).replace("\\", "/")
+            rel = Path(self.images_dir).relative_to(settings.BASE_DIR)
+            return "/" + str(rel).replace("\\", "/")
         except ValueError:
             return str(self.images_dir).replace("\\", "/")
 

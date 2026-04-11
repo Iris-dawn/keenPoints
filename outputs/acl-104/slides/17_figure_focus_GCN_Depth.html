@@ -1,0 +1,286 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>Impact of GCN Depth</title>
+    <style>
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent1);
+            font-weight: bold;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        .content-col {
+            position: absolute;
+            left: 35px;
+            top: 72px;
+            width: 380px;
+            bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            z-index: 5;
+        }
+
+        .col-divider {
+            position: absolute;
+            left: 425px;
+            top: 75px;
+            bottom: 55px;
+            width: 1px;
+            background: var(--accent4);
+            z-index: 5;
+        }
+
+        .image-col {
+            position: absolute;
+            left: 435px;
+            top: 72px;
+            right: 20px;
+            bottom: 50px;
+            z-index: 5;
+        }
+
+        .image-frame {
+            width: 100%;
+            height: calc(100% - 36px);
+            border: 1px solid var(--accent4);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .image-caption {
+            margin-top: 5px;
+            font-size: 10.5px;
+            color: var(--accent6);
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--lt1);
+            background: var(--accent1);
+            padding: 5px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .point {
+            display: flex;
+            gap: 9px;
+            align-items: flex-start;
+        }
+
+        .point .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent1);
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .point p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--dk1);
+        }
+
+        .point p em {
+            color: var(--accent1);
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .sep {
+            height: 1px;
+            background: var(--dk2);
+            margin: 4px 0;
+        }
+
+        .highlight-box {
+            background: var(--dk2);
+            border-left: 3px solid var(--accent1);
+            border-radius: 0 4px 4px 0;
+            padding: 10px 12px;
+            margin-top: 6px;
+            font-size: 12.5px;
+            color: var(--accent6);
+            line-height: 1.5;
+        }
+
+        .highlight-box b {
+            color: var(--accent1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- Decoration -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                fill-rule="nonzero" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+
+        <div class="slide-section">12</div>
+        <div class="slide-title">
+            <h1>Impact of GCN Depth</h1>
+        </div>
+
+        <div class="content-col">
+            <div class="section-label">Ablation Study: GCN Layers</div>
+            <div class="point">
+                <div class="dot"></div>
+                <p><em>One-layer</em> structure encoder performs best in both HiAGM-LA and HiAGM-TP</p>
+            </div>
+            <div class="sep"></div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Correlation between <em>non-adjacent nodes</em> is not essential and may introduce noise</p>
+            </div>
+            <div class="sep"></div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>Conclusion aligns with <em>recursive regularization</em> and transfer learning principles</p>
+            </div>
+            <div class="highlight-box">
+                <b>Key finding:</b> Local 1-hop hierarchical relationships are sufficient for effective label modeling —
+                deeper GCN layers do not improve, and may hurt performance.
+            </div>
+        </div>
+
+        <div class="col-divider"></div>
+
+        <div class="image-col">
+            <div class="image-frame">
+                <img src="/outputs/acl-104/images/e03e245987639d02de007669437d1efd90fdbee7bc4acea1175311c8bc0fa3bb.jpg"
+                    alt="Figure 4: GCN Depth Ablation" class="img-fit">
+            </div>
+            <div class="image-caption">Figure 4: Ablation study on GCN depth. Micro-F1 scores for 1-, 2-, 3-layer GCN
+                across HiAGM-LA, HiAGM-TP-Fixed, and HiAGM-TP.</div>
+        </div>
+
+        <div class="slide-footer-info">Page 18</div>
+    </div>
+</body>
+
+</html>

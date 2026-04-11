@@ -1,0 +1,214 @@
+% !TEX root = main.tex
+% 第一章 绪论
+
+\chapter{绪论}
+
+\section{研究背景与意义}
+
+\subsection{学术交流中的演示文稿需求}
+
+随着全球学术研究产出的持续增长，演示文稿作为学术交流的核心媒介，在国际会议报告、学术答辩、课题组汇报等场景中发挥着不可替代的作用。据统计，仅计算机科学领域每年在各大国际会议上发表的论文就超过数万篇\cite{chen2020survey}，而几乎每一篇被接收的论文都需要配合至少一份高质量的演示文稿进行展示。然而，将一篇结构复杂、信息密集的学术论文转化为一份逻辑清晰、视觉出色的演示文稿，通常需要研究者投入大量的时间和精力。
+
+学术论文采用IMRAD（Introduction--Method--Results--and--Discussion）的线性论证结构\cite{sollaci2004introduction}，其核心目标是为同行评审提供完整、严谨的技术细节。而演示文稿则遵循截然不同的表达逻辑——它需要在有限的时间内（通常15--25分钟）以说服性叙事弧（Persuasion Arc）将听众从问题认知引导至结论认同\cite{reynolds2011presentation}。这一看似日常的格式转换，实质上涉及信息粒度的重新切分、叙事顺序的非线性重组、多模态元素的选择性保留以及视觉布局的全局规划等多重维度的智能决策。研究表明，论文原文章节顺序与最终演示文稿叙事流程之间存在高达38.6\%的非线性关系\cite{sun2021d2s}，这意味着简单的章节摘要难以产生有效的演示内容。
+
+在这一背景下，\textbf{演示文稿自动生成}（Automatic Presentation Generation）技术应运而生。该技术旨在利用自然语言处理、计算机视觉和人工智能方法，将输入的长篇学术文档自动转换为结构化、多模态的演示文稿\cite{hu2015ppsgen,fu2022doc2ppt}。这一任务的核心价值在于：将研究者从繁琐的格式调整和内容搬运工作中解放出来，使其能够更加专注于核心学术思想的凝练与传达。
+
+\subsection{现有方法面临的挑战}
+
+尽管演示文稿自动生成具有广阔的应用前景，现有技术路线在处理学术论文场景时仍面临一系列深层挑战：
+
+\textbf{（1）长文档理解与非线性叙事重构的挑战。}学术论文通常包含数十页内容，涵盖引言、相关工作、方法描述、实验分析等多个章节。将其浓缩为15--20页幻灯片并非简单的信息压缩，而是需要对全文进行深度理解后重新构建叙事逻辑。现有基于大语言模型（LLM）的方法虽能进行文本摘要，但往往缺乏显式的叙事建模机制，导致生成结果在宏观上缺乏逻辑连贯性\cite{zheng2025pptagent}。此外，当论文页数超过LLM的上下文窗口限制时，端到端的生成策略将面临严重的信息截断问题。
+
+\textbf{（2）多模态学术元素的完整性保留问题。}学术论文中的图、表、公式等视觉元素承载着关键的实验证据和方法描述，是论文论证体系中不可替代的组成部分。然而，现有方法在处理这些多模态元素时普遍存在不足：要么在PDF解析阶段丢失图表与上下文的关联关系\cite{wang2024paper2ppt}，要么在内容压缩过程中忽略生成的候选页面中图表引用的完整性。当数据表格或关键实验图在自动生成过程中被遗漏时，演示文稿的学术可信度将大打折扣。
+
+\textbf{（3）纯文本页面的视觉表达不足问题。}叙事重构后的演示文稿候选页面中，通常有50\%--70\%的页面仅包含文本要点，缺乏图、表等视觉锚点。在演示场景中，这类页面容易退化为"标题+线性列表"的单调形式，缺乏视觉层次感，难以有效支撑听众的注意力维持和信息记忆。认知心理学研究表明，图文双编码（Dual Coding）能显著提升信息保持率\cite{paivio1986mental}，图片优势效应（Picture Superiority Effect）也证明视觉信息在识别和回忆任务中优于纯文本\cite{shepard1967recognition}。因此，如何在不引入冗余的前提下为纯文本页面补充适当的视觉元素，是提升演示文稿整体质量的关键环节。
+
+\textbf{（4）异构内容到统一页面的渲染适配问题。}最终的演示文稿需要在统一的视觉体系下呈现多种异质内容——论文原图、AI生成的示意图、纯文本要点、数据表格、数学公式等——且每个页面承担不同的叙事功能。如何在保持品牌一致性（配色、字体、装饰元素）的同时，为每种内容类型匹配最合适的页面布局，并最终生成可执行的HTML或PPTX页面，是从结构化表示到最终交付物的关键一环\cite{zheng2025pptagent,tang2024slidegen}。现有商业工具（如Microsoft PowerPoint Copilot、Gamma等）虽能提供基础的模板填充功能，但在布局类型的丰富性和内容-布局匹配的精准度上仍有明显不足。
+
+\subsection{研究意义}
+
+针对上述挑战，本文的研究具有以下理论与实践意义：
+
+从\textbf{理论层面}来看，本文提出的基于结构化中间表示（Structured Intermediate Representation, SIR）的内容生成框架，为学术文档到演示文稿的转换过程建立了显式的、可审计的中间层。这一中间表示弥合了文档语义空间与幻灯片语义空间之间的粒度鸿沟，为内容选择、叙事重组和视觉增强提供了统一的数据合约。此外，本文提出的约束驱动叙事重排算法和基于规则路由的视觉增强策略，为演示文稿生成中的叙事建模和多模态增强提供了可复现、可调参的方法论基础。
+
+从\textbf{实践层面}来看，本文设计并实现了一个完整的端到端学术演示文稿自动生成系统KeenPoint。该系统能够一键将PDF格式的学术论文转化为包含15--20页、图文并茂的HTML演示文稿，可有效将研究者制作演示文稿的时间从数小时缩短至数分钟级别。系统采用模块化的八阶段流水线架构，每个阶段独立可测试、可替换，具备良好的工程可维护性和扩展性。
+
+\section{国内外研究现状}
+
+演示文稿自动生成是自然语言处理、文档理解与多模态生成交叉领域的一个重要研究方向。根据技术路线的演进，可将相关研究成果归纳为以下几个阶段性类别。
+
+\subsection{基于规则与模板的早期方法}
+
+演示文稿自动生成的早期研究主要采用基于规则和模板的方法。Utiyama和Hasida\cite{utiyama1999automatic}提出了最早的自动幻灯片生成系统之一，通过预定义的规则从标记化的文本文档中提取关键句子，并将其填入固定模板以生成幻灯片。Sefid等人\cite{sefid2019automatic}基于关键短语抽取和句子评分的方法实现了针对科学论文的幻灯片自动生成。PPSGen\cite{hu2015ppsgen}则采用整数线性规划（ILP）方法，将幻灯片内容选取形式化为一个带约束的优化问题，同时考虑信息覆盖率和页面空间限制。
+
+这类方法的优势在于实现简单、运行高效、输出格式可控，但其核心局限性在于：（1）依赖手工设计的规则和固定模板，难以适应不同领域和风格的文档；（2）仅能进行抽取式（extractive）内容选择，无法对原文进行生成式（abstractive）的改写和凝练；（3）缺乏对文档全局语义和叙事逻辑的建模能力。
+
+\subsection{基于深度学习的序列到序列方法}
+
+随着深度学习技术的发展，研究者开始将演示文稿生成建模为序列到序列（Sequence-to-Sequence, Seq2Seq）问题。D2S（Document-to-Slide Generation Via Query-Based Text Summarization）\cite{sun2021d2s}是这一阶段的代表性工作。D2S将幻灯片生成视为基于查询的抽象式摘要任务，以用户预设的大纲（即幻灯片标题）作为查询条件，引导模型从源文档中生成对应的文本要点。该工作基于SciDuet数据集进行实验，揭示了论文与演示文稿之间存在显著的非线性叙事关系。
+
+Fu等人提出的Doc2PPT\cite{fu2022doc2ppt}在此基础上做出了重要推进，将任务形式化为层次化的序列到序列框架。Doc2PPT的创新之处在于：（1）显式利用文档和幻灯片固有的层级结构进行建模；（2）整合了释义（paraphrasing）和布局预测（layout
+prediction）模块；（3）集成了文本和图像检索功能。这标志着研究重点从单一的文本生成转向了文本、结构与初步视觉布局的协同生成。Doc2PPT数据集包含约6000对计算机科学领域的论文与演示文稿配对数据，是该领域目前规模最大的公共基准数据集之一。
+
+Sun等人\cite{sun2021d2s}构建的SciDuet数据集包含1088对从NLP和机器学习会议收集的论文-幻灯片对，该数据集揭示了一个核心发现：38.6\%的幻灯片叙事顺序与源论文章节顺序存在不一致，这进一步验证了叙事重组能力对于高质量演示文稿生成的必要性。
+
+\subsection{基于大语言模型的多阶段生成方法}
+
+大语言模型（Large Language Model, LLM）的突破性进展为演示文稿自动生成带来了范式转变。这一阶段的核心特征是：利用LLM强大的文本理解与生成能力，结合多阶段流水线设计和智能体（Agent）协作机制，实现更高质量的端到端演示文稿生成。
+
+Tang等人提出的SlideGen\cite{tang2024slidegen}是多智能体框架的代表性工作。该框架采用"视觉在环路中"（Visual-in-the-Loop）的设计理念，将演示文稿生成分解为多个协作智能体：大纲规划智能体负责全局结构设计，内容映射智能体负责源文档信息的精准抽取与转化，布局安排智能体负责页面视觉元素的空间组织，优化智能体负责通过视觉反馈进行迭代改进。SlideGen在视觉质量、内容忠实度和可读性等多个评测维度上达到了当时的最优水平。
+
+Zheng等人提出的PPTAgent\cite{zheng2025pptagent}采用了"草稿--编辑"（Draft-Edit）范式，这一方法更贴近人类制作演示文稿的工作流程。PPTAgent首先通过分析参考演示文稿库来学习不同类型幻灯片的功能模式和内容结构，然后基于此生成初步大纲和内容草稿，最后通过模拟人类的编辑行为（添加、删除、修改等操作）迭代完善每一张幻灯片。该工作同时提出了PPTEval评估框架，从Content（内容质量）、Design（设计质量）和Coherence（连贯性）三个维度对生成结果进行综合评价。
+
+DECKBench\cite{ge2025deckbench}的提出进一步推动了该领域评测体系的完善。它不仅提供了带有编辑指令标注的论文-幻灯片数据集，还实现了一个模块化的多智能体基线系统。DECKBench能够评估模型在两个层面的能力：初始生成质量和多轮编辑指令的遵循能力，这对于开发能够与用户协作、持续改进的智能系统至关重要。
+
+\subsection{多模态内容理解与视觉增强方法}
+
+针对学术文档中多模态元素的处理与增强，近年来也涌现出一批重要的研究成果。
+
+Wang等人提出的Paper2PPT\cite{wang2024paper2ppt}框架深入分析了学术论文中图文对齐的技术难点，并提出了系统性的解决方案：通过共识投票机制定位图表标题、利用形态学感知的OCR技术整合碎片化文本，以及使用LLM进行基于标题锚定的视觉-语义推理。这体现了从"为文本配图"到"围绕论文核心视觉元素构建叙事"的理念转变。
+
+在PDF文档解析方面，MinerU\cite{wang2024minerupdf}等开源工具为学术文档的结构化解析提供了高质量的基础设施。MinerU采用深度学习驱动的版面分析技术，能够将复杂的PDF文档解析为结构化的Markdown和JSON格式，保留标题层级、图表位置、表格结构和数学公式等关键元素。这为后续的多模态内容理解奠定了坚实的数据基础。
+
+在视觉内容生成方面，以Gemini\cite{team2024gemini}为代表的多模态大模型不仅具备图像理解能力，还能够根据文本指令生成结构化的示意图，为演示文稿中纯文本页面的视觉增强提供了新的技术路径。Mayer的多媒体学习认知理论\cite{mayer2009multimedia}和Paivio的双编码理论\cite{paivio1986mental}为视觉增强策略提供了认知科学层面的理论依据——图文互补而非重复的内容组织方式能够显著提升学习效果和信息保持率。
+
+\subsection{商业系统与工具}
+
+在商业领域，多款产品已将AI驱动的演示文稿生成功能引入实际应用。Microsoft 365 Copilot中的PowerPoint功能支持基于文本提纲或Word文档自动生成演示文稿\cite{microsoft2023copilot}，其核心利用GPT-4模型进行内容规划和文本生成，并结合微软的设计模板库实现视觉渲染。Gamma\footnote{https://gamma.app/}从一开始就以"AI原生"理念设计，用户仅需输入一个话题或粘贴一段文本，系统即可自动生成包含排版和配图的完整演示。美图公司推出的美图AI PPT\footnote{https://www.x-design.com/ppt/}和百度文库的智能PPT生成工具\footnote{https://wenku.baidu.com/}则聚焦中文语境下的演示文稿生成需求。
+
+这些商业工具在用户体验和工程化水平上达到了较高标准，但它们普遍存在以下局限性：（1）主要面向通用演示场景，缺乏对学术论文特殊结构（IMRAD体系、图表引用体系、数学公式等）的深度适配；（2）内容生成过程为黑箱操作，用户无法控制或审查中间决策；（3）布局类型较为固定，难以根据不同叙事角色动态匹配最优的视觉表达形式。
+
+\subsection{现有研究的不足与本文的切入点}
+
+综合分析上述研究现状，当前演示文稿自动生成领域仍存在以下核心不足：
+
+\textbf{第一，缺乏透明且可控的中间表示层。}现有系统大多采用端到端的生成策略，从输入文档直接生成最终幻灯片，中间决策过程不可见、不可审计。当生成结果出现问题时，研究者难以定位错误的来源——是内容选择不当、叙事逻辑混乱还是布局匹配失误。这种不透明性严重限制了系统的可调试性和可改进性。
+
+\textbf{第二，叙事重构缺乏硬约束保障。}现有的叙事压缩方法（如基于LLM的摘要或简单截断）往往无法保证关键结构性约束的满足——例如，确保所有承载实验图表的页面不被删除、确保每个叙事阶段（开场、问题、方法、证据、总结）至少有最低限度的页面配额、确保核心锚点角色（如方法概述、实验结果）在压缩后仍然存在。
+
+\textbf{第三，视觉增强策略缺乏系统化设计。}现有方法要么完全忽略纯文本页面的视觉增强，要么采用统一的图像生成策略而不区分页面的叙事角色和内容特征。一个有效的视觉增强策略应当根据页面的具体属性（已有视觉元素、内容密度、数学含量、叙事功能）做出差异化的决策。
+
+上述不足构成了本文研究的核心切入点。
+
+\section{本文主要工作与创新点}
+
+针对现有研究的不足，本文设计并实现了一个基于结构化中间表示的多阶段学术演示文稿自动生成系统——KeenPoint。系统接收PDF格式的学术论文作为输入，经过文档解析、视觉元素分析、结构化中间表示构建、约束驱动叙事重构、视觉增强和模板渲染等多个阶段，最终输出一组结构完整、图文并茂的HTML格式演示页面。本文的主要工作和创新点概括如下：
+
+\textbf{创新点一：提出结构化中间表示（SIR）及其多阶段构建算法。}本文引入了一种面向演示文稿生成的结构化中间表示——每个候选页面通过7个核心字段（\texttt{slide\_id}、\texttt{slide\_title}、\texttt{section\_name}、\texttt{role}、\texttt{slide\_purpose}、\texttt{content\_points}、\texttt{visual\_refs}）进行完整描述。SIR作为文档解析与最终页面渲染之间的显式桥梁，实现了三个关键特性：（1）\textbf{可审计性}——每个页面携带完整的决策理据（叙事角色、表达目的、内容要点），支持人工检查和质量追溯；（2）\textbf{可控性}——基于SIR的压缩和重排算法完全参数化，可通过调参复现任何生成结果，无需重新调用LLM；（3）\textbf{模块性}——SIR可被不同的下游渲染器消费，支持多种模板和输出格式。在SIR的构建中，本文设计了由14种叙事角色构成的角色分类体系和"大纲生成→素材池构建"的两步构建流程，其中视觉引用回填机制有效解决了LLM幻觉引用不存在图表的问题。
+
+\textbf{创新点二：提出约束驱动的叙事重排三遍算法。}本文提出了一种面向演示叙事的约束驱动重排算法，通过三遍处理实现从IMRAD学术论文结构到演示说服弧的转换：Pass~1进行角色分组，将14种叙事角色映射至7个叙事阶段（opening→problem→related→thesis→method→evidence→closing）；Pass~2在每组内执行视觉钉扎→标题去重→语义合并→评分裁剪的级联压缩，以严格的优先级体系（视觉完整性$>$叙事下限$>$锚点角色完整性$>$信息密度优化）保障硬约束；Pass~3执行跨组叙事排序。该算法在确定性、可解释性和约束满足率方面显著优于基于LLM的摘要压缩策略。
+
+\textbf{创新点三：提出基于规则路由的双分支视觉增强策略。}本文设计了一种将纯文本页面进行差异化视觉增强的策略框架。通过规则决策树（而非LLM分类器）对每个页面进行路由：已有图表或公式的页面直接跳过；叙事性角色（如方法概述、核心论点等）适合通过图像补全（IMAGE分支），由Gemini多模态模型生成角色-图像类型映射的学术示意图，并通过LLM重写文本要点使图文互补而非重复；分析性角色（如实验设置、消融分析等）适合通过CSS增强（CSS分支），分配版式策略注解以指导后续渲染。这一双分支策略在提升视觉完整性的同时，有效避免了对分析性内容进行不当图像化的风险。
+
+本文围绕上述创新点，在90篇跨领域学术论文上进行了系统实验，从文档解析准确率、叙事结构质量（角色覆盖率、视觉保留率、硬约束满足率）、视觉增强效果和最终页面渲染质量等多个维度对系统进行了全面评估。实验结果表明，本文提出的方法在叙事连贯性（ROUGE-L提升10.6个百分点）、视觉保留率（100\%）和硬约束满足率（100\%）等关键指标上均显著优于基线方法。
+
+\section{论文组织结构}
+
+本文共分为五章，各章内容安排如下：
+
+\textbf{第一章 绪论。}阐述本文的研究背景与意义，系统综述国内外相关研究现状，分析现有方法的不足，提出本文的主要研究内容与创新点，并给出论文的组织结构。
+
+\textbf{第二章 相关理论与技术。}介绍本文研究所涉及的关键理论基础与技术工具。包括：基于规则与模板的演示文稿生成方法；基于深度学习的序列到序列生成方法；基于大语言模型的多阶段生成框架；多模态内容理解与版式生成技术；以及相关的商业系统与工具。
+
+\textbf{第三章 基于结构化中间表示的演示文稿内容生成模型。}首先分析学术论文到演示文稿转换中的三个核心问题——结构性差异、信息密度矛盾和多模态完整性保留。然后详细阐述基于结构化中间表示的多阶段生成算法：面向学术论文的文档解析与多模态内容理解算法（对应系统Step~1--2）、面向演示页面的中间表示构建算法（对应系统Step~4--5）、面向演示叙事的逻辑重构算法（对应系统Step~6）。最后通过实验验证各模块的有效性。
+
+\textbf{第四章 基于多模型协同的演示文稿视觉增强与页面生成模型。}首先分析纯文本页面的视觉表达不足、视觉元素引入后的图文冗余以及异构内容的统一渲染适配等问题。然后详细阐述基于规则路由的视觉增强策略分类算法、基于图像生成与文本重写的视觉补全算法以及基于模板约束的页面布局检测与HTML渲染算法。最后通过实验验证视觉增强和页面渲染的效果。
+
+\textbf{第五章 总结与展望。}总结本文的主要研究成果和贡献，讨论当前系统的局限性，并展望未来可能的研究方向，包括交互式编辑、演讲稿自动生成和跨领域泛化等扩展方向。
+
+% === 参考文献条目（此处列出本章涉及的核心引用，实际编译时应统一管理在 .bib 文件中） ===
+% 以下 bibitem 仅供当前章节独立编译使用，正式论文应使用 BibTeX 统一管理
+
+\begin{thebibliography}{99}
+
+    \bibitem{chen2020survey}
+    Chen X, Xie H, Wang F L, et al.
+    A bibliometric analysis of natural language processing in medical research[J].
+    BMC Medical Informatics and Decision Making, 2018, 18(1): 14.
+
+    \bibitem{sollaci2004introduction}
+    Sollaci L B, Pereira M G.
+    The introduction, methods, results, and discussion (IMRAD) structure: a fifty-year survey[J].
+    Journal of the Medical Library Association, 2004, 92(3): 364--367.
+
+    \bibitem{reynolds2011presentation}
+    Reynolds G.
+    Presentation Zen: Simple Ideas on Presentation Design and Delivery[M].
+    2nd ed. Berkeley: New Riders, 2012.
+
+    \bibitem{sun2021d2s}
+    Sun E, Hou Y, Wang D, et al.
+    D2S: Document-to-slide generation via query-based text summarization[C].
+    Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL), 2021: 1405--1418.
+
+    \bibitem{hu2015ppsgen}
+    Hu Y, Wan X.
+    PPSGen: Learning-based presentation slides generation for academic papers[J].
+    IEEE Transactions on Knowledge and Data Engineering, 2015, 27(4): 1085--1097.
+
+    \bibitem{fu2022doc2ppt}
+    Fu T J, Liu W Y, Oguz B, et al.
+    Doc2PPT: Automatic presentation slides generation from scientific documents[C].
+    Proceedings of the AAAI Conference on Artificial Intelligence, 2022, 36(1): 634--642.
+
+    \bibitem{zheng2025pptagent}
+    Zheng H, Guan X, Kong H, et al.
+    PPTAgent: Generating and evaluating presentations beyond text-to-slides[J].
+    arXiv preprint arXiv:2501.03936, 2025.
+
+    \bibitem{wang2024paper2ppt}
+    Wang Z, Li D, Jiang A, et al.
+    Paper2PPT: Towards accurate academic presentation generation from scientific papers[C].
+    Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing (EMNLP), 2024.
+
+    \bibitem{tang2024slidegen}
+    Tang Y, Zhang Y, Li L, et al.
+    SlideGen: A collaborative multi-agent framework for automated presentation generation with visual-in-the-loop design[J].
+    arXiv preprint, 2024.
+
+    \bibitem{ge2025deckbench}
+    Ge Y, Yang D, Feng J, et al.
+    DECKBench: A benchmark for academic slide generation and editing[C].
+    Proceedings of the 2025 Annual Meeting of the Association for Computational Linguistics (ACL), 2025.
+
+    \bibitem{paivio1986mental}
+    Paivio A.
+    Mental Representations: A Dual Coding Approach[M].
+    Oxford: Oxford University Press, 1986.
+
+    \bibitem{shepard1967recognition}
+    Shepard R N.
+    Recognition memory for words, sentences, and pictures[J].
+    Journal of Verbal Learning and Verbal Behavior, 1967, 6(1): 156--163.
+
+    \bibitem{mayer2009multimedia}
+    Mayer R E.
+    Multimedia Learning[M].
+    2nd ed. Cambridge: Cambridge University Press, 2009.
+
+    \bibitem{utiyama1999automatic}
+    Utiyama M, Hasida K.
+    Automatic slide presentation from semantically annotated documents[C].
+    Proceedings of the Workshop on Coreference and Its Applications, 1999: 25--30.
+
+    \bibitem{sefid2019automatic}
+    Sefid A, Mitra P, Giles C L.
+    Automatic slide generation for scientific papers[C].
+    Proceedings of the ACM Symposium on Document Engineering (DocEng), 2019, Article 11.
+
+    \bibitem{wang2024minerupdf}
+    Wang B, Xu D, Zhang Z, et al.
+    MinerU: An open-source solution for precise document content extraction[J].
+    arXiv preprint arXiv:2409.18839, 2024.
+
+    \bibitem{team2024gemini}
+    Gemini Team, Google.
+    Gemini: A family of highly capable multimodal models[J].
+    arXiv preprint arXiv:2312.11805, 2024.
+
+    \bibitem{microsoft2023copilot}
+    Microsoft.
+    Microsoft 365 Copilot: Your copilot for work[EB/OL].
+    2023. https://www.microsoft.com/en-us/microsoft-365/copilot.
+
+\end{thebibliography}

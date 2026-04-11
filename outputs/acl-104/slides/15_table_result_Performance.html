@@ -1,0 +1,403 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>Performance vs. Baselines</title>
+    <style>
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent1);
+            font-weight: bold;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        /* Left column bullets */
+        .content-col {
+            position: absolute;
+            left: 35px;
+            top: 72px;
+            width: 400px;
+            bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-top: 8px;
+        }
+
+        .col-header {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--lt1);
+            background: var(--accent1);
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+
+        .point {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .point .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent1);
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .point p {
+            margin: 0;
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .point b {
+            color: var(--accent1);
+        }
+
+        .metric-strip {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .metric-box {
+            flex: 1;
+            background: var(--accent1);
+            color: var(--lt1);
+            border-radius: 5px;
+            padding: 8px 8px;
+            text-align: center;
+        }
+
+        .metric-box .val {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .metric-box .lbl {
+            font-size: 10px;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .metric-box.light {
+            background: var(--accent2);
+        }
+
+        /* Column divider */
+        .col-divider {
+            position: absolute;
+            left: 447px;
+            top: 75px;
+            bottom: 55px;
+            width: 1px;
+            background: var(--accent4);
+            z-index: 5;
+        }
+
+        /* Right: table + caption */
+        .table-col {
+            position: absolute;
+            left: 460px;
+            top: 72px;
+            right: 25px;
+            bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 8px;
+        }
+
+        .table-col .caption {
+            font-size: 10px;
+            color: var(--accent6);
+            line-height: 1.4;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        table.result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+        }
+
+        table.result-table thead tr:first-child th {
+            background: var(--accent1);
+            color: var(--lt1);
+            padding: 8px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        table.result-table thead tr:nth-child(2) th {
+            background: var(--accent2);
+            color: var(--lt1);
+            padding: 7px 10px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        table.result-table tbody tr {
+            border-bottom: 1px solid var(--accent4);
+        }
+
+        table.result-table tbody td {
+            padding: 10px 12px;
+            text-align: center;
+            color: var(--dk1);
+            font-size: 13px;
+        }
+
+        table.result-table tbody tr:even td {
+            background: var(--dk2);
+        }
+
+        table.result-table tbody td:first-child {
+            font-weight: bold;
+            color: var(--accent1);
+            text-align: left;
+        }
+
+        .best {
+            font-weight: bold;
+            color: var(--accent1);
+        }
+
+        .section-note {
+            font-size: 10px;
+            color: var(--accent5);
+            font-style: italic;
+            margin-top: 4px;
+            padding: 4px 8px;
+            background: var(--dk2);
+            border-radius: 4px;
+            border-left: 3px solid var(--accent4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- Decoration -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                fill-rule="nonzero" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+
+        <div class="slide-section">11</div>
+        <div class="slide-title">
+            <h1>Performance vs. Baselines</h1>
+        </div>
+
+        <!-- Left column -->
+        <div class="content-col">
+            <div class="col-header">Key Findings on RCV1-V2</div>
+
+            <div class="point">
+                <div class="dot"></div>
+                <p>Both HiAGM variants <b>surpass state-of-the-art</b>, especially in Macro-F1</p>
+            </div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>HiAGM-LA achieves <b>1.75% Macro-F1 improvement</b> over HiLAP without recursive regularization</p>
+            </div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>HiAGM-TP shows <b>3.13% Macro-F1 improvement</b> under same non-regularized conditions</p>
+            </div>
+            <div class="point">
+                <div class="dot"></div>
+                <p>GCN encoder in HiAGM-TP is <b>10× faster</b> than TreeLSTM while achieving highest scores</p>
+            </div>
+
+            <!-- Best result boxes -->
+            <div class="metric-strip">
+                <div class="metric-box light">
+                    <div class="val">82.54%</div>
+                    <div class="lbl">HiAGM-LA<br />Micro-F1</div>
+                </div>
+                <div class="metric-box light">
+                    <div class="val">61.90%</div>
+                    <div class="lbl">HiAGM-LA<br />Macro-F1</div>
+                </div>
+                <div class="metric-box">
+                    <div class="val">83.92%</div>
+                    <div class="lbl">HiAGM-TP<br />Micro-F1</div>
+                </div>
+                <div class="metric-box">
+                    <div class="val">63.01%</div>
+                    <div class="lbl">HiAGM-TP<br />Macro-F1</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-divider"></div>
+
+        <!-- Right: Table -->
+        <div class="table-col">
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Model</th>
+                        <th colspan="3">HiAGM-LA</th>
+                        <th colspan="3">HiAGM-TP</th>
+                    </tr>
+                    <tr>
+                        <th>Micro</th>
+                        <th>Macro</th>
+                        <th>Time</th>
+                        <th>Micro</th>
+                        <th>Macro</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TreeLSTM</td>
+                        <td>82.54</td>
+                        <td>61.90</td>
+                        <td>1.0×</td>
+                        <td>83.24</td>
+                        <td>62.60</td>
+                        <td>3.2×</td>
+                    </tr>
+                    <tr style="background:var(--dk2);">
+                        <td>GCN</td>
+                        <td>82.21</td>
+                        <td>61.65</td>
+                        <td>0.9×</td>
+                        <td class="best">83.92</td>
+                        <td class="best">63.01</td>
+                        <td>1.1×</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="section-note">Table 2: Comparison on RCV1-V2 (F1 scores in %). HiAGM-TP with GCN achieves best
+                Micro &amp; Macro-F1 with near-baseline inference time.</div>
+        </div>
+
+        <div class="slide-footer-info">Page 16</div>
+    </div>
+</body>
+
+</html>

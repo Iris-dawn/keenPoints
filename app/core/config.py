@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     LOG_FILE: str = "logs/app.log"
 
     # Dify API
-    DIFY_API_KEY: Optional[str] = "app-VWzZqV55lOhVZoQm91SGaSLO"
+    DIFY_API_KEY: Optional[str] = None
     DIFY_API_URL: str = "https://api.dify.ai/v1"
     DIFY_USER: str = "keenpoint"
 
@@ -82,6 +82,39 @@ OUTPUT_FILES = {
 
 settings = Settings()
 
+# ── Paper context ─────────────────────────────────────────────────────────────
+# Tracks which paper (file stem) is currently being processed.
+# Persisted to outputs/.current_paper so it survives server restarts.
+
+_current_paper: Optional[str] = None
+_PAPER_MARKER = Path(settings.BASE_DIR) / settings.OUTPUT_DIR / ".current_paper"
+
+
+def set_current_paper(name: Optional[str]) -> None:
+    """Set the active paper name and persist it to disk."""
+    global _current_paper
+    _current_paper = name or None
+    _PAPER_MARKER.parent.mkdir(parents=True, exist_ok=True)
+    if _current_paper:
+        _PAPER_MARKER.write_text(_current_paper, encoding="utf-8")
+    elif _PAPER_MARKER.exists():
+        _PAPER_MARKER.unlink()
+
+
+def get_current_paper() -> Optional[str]:
+    """Get the active paper name, loading from disk if not yet set in memory."""
+    global _current_paper
+    if _current_paper is None and _PAPER_MARKER.exists():
+        _current_paper = _PAPER_MARKER.read_text(encoding="utf-8").strip() or None
+    return _current_paper
+
+
+def _paper_output_dir() -> Path:
+    """Return the output directory for the current paper (or bare outputs/ if unset)."""
+    paper = get_current_paper()
+    base = Path(settings.BASE_DIR) / settings.OUTPUT_DIR
+    return base / paper if paper else base
+
 
 def ensure_dirs():
     """Create required directories."""
@@ -91,8 +124,8 @@ def ensure_dirs():
 
 
 def save_output(data, filename: str) -> Path:
-    """Save data as JSON to the outputs directory."""
-    output_dir = Path(settings.BASE_DIR) / settings.OUTPUT_DIR
+    """Save data as JSON to the current-paper output directory."""
+    output_dir = _paper_output_dir()
     output_dir.mkdir(parents=True, exist_ok=True)
     path = output_dir / filename
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -100,5 +133,5 @@ def save_output(data, filename: str) -> Path:
 
 
 def get_output_path(filename: str) -> Path:
-    """Get full path for an output file."""
-    return Path(settings.BASE_DIR) / settings.OUTPUT_DIR / filename
+    """Get full path for an output file under the current-paper directory."""
+    return _paper_output_dir() / filename

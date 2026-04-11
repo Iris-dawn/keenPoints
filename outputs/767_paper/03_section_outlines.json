@@ -1,0 +1,970 @@
+{
+  "sections": [
+    {
+      "section_name": "1 Introduction",
+      "raw_result": {
+        "section_name": "1 Introduction",
+        "ppt_outline": [
+          {
+            "slide_title": "Email as a Ubiquitous Communication Medium",
+            "role": "hook_context",
+            "slide_purpose": "Establish the prevalence and challenges of email communication in professional settings",
+            "content_points": [
+              "Email dominates enterprise communication (Radicati & Levenstein, 2015)",
+              "Service providers innovate to enhance user experience across applications",
+              "Existing features: Smart Reply (Kannan et al., 2016) and SmartCompose (Chen et al., 2019)",
+              "Emerging task management tools: Gmail's Nudge and Outlook Insights"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "The Smart-To-Do Innovation",
+            "role": "problem_definition",
+            "slide_purpose": "Introduce the novel task of automated To-Do generation from emails",
+            "content_points": [
+              "Novel application: Generating actionable To-Do items from email commitments",
+              "Key challenges: Email thread diversity, structural heterogeneity, and metadata complexity",
+              "Differentiation: Action-focused generation vs. traditional text summarization",
+              "Core objective: Identify task sentences, contextual information, and associated entities"
+            ],
+            "visual_refs": {
+              "images": [
+                1
+              ],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Technical Approach Overview",
+            "role": "overview_figure",
+            "slide_purpose": "Present the end-to-end framework for To-Do item generation",
+            "content_points": [
+              "Two-stage process: Commitment detection followed by neural generation",
+              "Component 1: Commitment classifier identifies action-intent sentences",
+              "Component 2: Unsupervised extraction of contextual sentences",
+              "Component 3: Sequence-to-sequence architecture for final output generation"
+            ],
+            "visual_refs": {
+              "images": [
+                2
+              ],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "2 Related Works",
+      "raw_result": {
+        "section_name": "2 Related Works",
+        "ppt_outline": [
+          {
+            "slide_title": "Foundational Research in Email Processing",
+            "role": "related_work",
+            "slide_purpose": "Establish historical context for email content analysis",
+            "content_points": [
+              "Pioneering works on email thread summarization (Rambow et al., 2004; Carenini et al., 2007)",
+              "Seminal research on speech act identification in emails (Carvalho & Cohen, 2005)",
+              "Cross-corpus adaptation techniques for email analysis (Azarbonyad et al., 2019)"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Neural Approaches to Email Understanding",
+            "role": "related_work",
+            "slide_purpose": "Highlight recent computational advances",
+            "content_points": [
+              "Neural architectures for action item modeling (Lin et al., 2018)",
+              "Intent identification in email conversations (Wang et al., 2019)",
+              "Supervised approaches for email subject generation (Zhang & Tetreault, 2019)"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Gaps in Task-Specific Email Processing",
+            "role": "gap_limitations",
+            "slide_purpose": "Identify research opportunities in email task extraction",
+            "content_points": [
+              "Limited focus on task-specific summarization (Corston-Oliver et al., 2004)",
+              "Existing approaches focus on general themes rather than actionable items",
+              "Supervised methods require extensive labeled data for sentence selection"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "3 Dataset Preparation",
+      "raw_result": {
+        "section_name": "3 Dataset Preparation",
+        "ppt_outline": [
+          {
+            "slide_title": "Dataset Foundation: Avocado Email Corpus",
+            "role": "related_work",
+            "slide_purpose": "Establish the foundational dataset used for Smart-To-Do development",
+            "content_points": [
+              "Leveraged Avocado dataset (Oard et al., 2015) as core corpus",
+              "Contains anonymized Outlook mailboxes from 279 enterprise employees",
+              "Comprises 938,035 emails with rich metadata annotations",
+              "Provides structural basis for task-oriented email analysis"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "3.1 Identifying Action Items in Emails",
+      "raw_result": {
+        "section_name": "3.1 Identifying Action Items in Emails",
+        "ppt_outline": [
+          {
+            "slide_title": "Email Intent Classification",
+            "role": "problem_definition",
+            "slide_purpose": "Define the scope of email intents relevant to task management.",
+            "content_points": [
+              "Emails contain diverse intents: meeting planning, information requests, casual conversations.",
+              "Focus on extracting 'commitment' intents where senders promise actions.",
+              "Commitments include task performance, information provision, or status updates.",
+              "Need precise identification of commitment sentences for downstream processing."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Commitment Classifier Architecture",
+            "role": "method_component",
+            "slide_purpose": "Detail the neural architecture for commitment detection.",
+            "content_points": [
+              "Binary classifier $\\mathcal{C}: S \\mapsto [0,1]$ operates at sentence level.",
+              "RNN-based model with word embeddings and self-attention mechanisms.",
+              "Takes full email context as input for classification decision.",
+              "Trained on 9076 annotated instances (2586 positive cases).",
+              "Achieves 86% precision and 84% recall on benchmark corpus."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Annotation Validation",
+            "role": "experiment_setup",
+            "slide_purpose": "Demonstrate reliability of training data.",
+            "content_points": [
+              "Three-judge annotation process with majority voting.",
+              "Cohen's kappa = 0.694 shows substantial inter-rater agreement.",
+              "Dataset balance: 28.5% positive cases (2586/9076).",
+              "Gold standard derived from Avocado email corpus."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "3.2 To-Do Item Annotation",
+      "raw_result": {
+        "section_name": "3.2 To-Do Item Annotation",
+        "ppt_outline": [
+          {
+            "slide_title": "Dataset Construction Pipeline",
+            "role": "method_overview",
+            "slide_purpose": "Outline the systematic process for generating annotated To-Do items from email data",
+            "content_points": [
+              "Filtered 500k raw sentences through commitment classifier (confidence threshold: 0.9)",
+              "Selected 29k high-confidence candidates → 12k randomly sampled for annotation",
+              "Integrated contextual metadata (From, SentTo, Subject, Body) for each candidate",
+              "Highlighted commitment sentences to guide annotators' focus"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Annotation Protocol Design",
+            "role": "method_component",
+            "slide_purpose": "Detail the human evaluation framework for generating gold-standard To-Do items",
+            "content_points": [
+              "Comprehensive guidelines provided: definition, structure, and examples of ideal To-Do items",
+              "Dual-annotation system with 2 independent judges per instance",
+              "Preservation of original email vocabulary prioritized",
+              "Contextual integration of previous email thread (e_p) when available"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Annotation Statistics & Characteristics",
+            "role": "results",
+            "slide_purpose": "Present quantitative insights about the annotated dataset",
+            "content_points": [
+              "Final dataset: 9,349 email instances with dual annotations",
+              "Median token length = 9 (Mean = 9.71) for generated To-Do items",
+              "60.42% inter-annotator agreement on subject line utility",
+              "Human evaluation shows mean scores: 3.1 (fluency), 2.9 (completeness)"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Quality Analysis of Human Annotations",
+            "role": "analysis_ablation",
+            "slide_purpose": "Evaluate trade-offs in annotation quality through systematic sampling",
+            "content_points": [
+              "100-item sample evaluated on 4-point scales for fluency and completeness",
+              "Identified inverse relationship: high fluency often correlates with low completeness",
+              "Grammatical correctness vs. contextual coverage represents key tension",
+              "Case analysis demonstrates annotation challenges in action item specification"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                1
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "4 Smart To-Do : Two Stage Generation",
+      "raw_result": {
+        "section_name": "4 Smart To-Do : Two Stage Generation",
+        "ppt_outline": [
+          {
+            "slide_title": "Two-Stage Generation Overview",
+            "role": "overview_figure",
+            "slide_purpose": "Introduce the high-level architecture of the two-stage approach for To-Do item generation.",
+            "content_points": [
+              "First stage: Sentence selection for relevant commitments.",
+              "Second stage: Generation of actionable To-Do items.",
+              "Objective: Filter out irrelevant email content (e.g., salutations, casual conversations).",
+              "Focus on informative sentences for task commitments."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "First Stage: Sentence Selection",
+            "role": "method_component",
+            "slide_purpose": "Detail the sentence selection process to identify commitment-related content.",
+            "content_points": [
+              "Filters generic email content (e.g., greetings, thanks).",
+              "Identifies sentences with actionable commitments.",
+              "Leverages neural text generation for relevance scoring.",
+              "Ensures only task-relevant sentences proceed to the second stage."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Second Stage: To-Do Item Generation",
+            "role": "method_component",
+            "slide_purpose": "Explain the sequence-to-sequence learning approach for generating structured To-Do items.",
+            "content_points": [
+              "Transforms selected sentences into concise To-Do items.",
+              "Utilizes neural sequence-to-sequence models.",
+              "Achieves BLEU score of 0.23 and ROUGE score of 0.63.",
+              "First work to address To-Do generation from emails."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "4.1 Identifying Helpful Sentences for Commitment Task",
+      "raw_result": {
+        "section_name": "4.1 Identifying Helpful Sentences for Commitment Task",
+        "ppt_outline": [
+          {
+            "slide_title": "Unsupervised Approach for Sentence Relevance",
+            "role": "method_overview",
+            "slide_purpose": "Introduce the unsupervised matching-based method for identifying helpful sentences in emails.",
+            "content_points": [
+              "Leverage unsupervised matching to score sentences for relevance to commitment.",
+              "Define commitment sentence as query and other sentences as candidates.",
+              "Compute relevance score Ω(s_i) for each sentence based on semantic similarity.",
+              "Select top K sentences as extractive summary for commitment context."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Enriched Query Context Construction",
+            "role": "method_component",
+            "slide_purpose": "Detail the process of creating an enriched context for relevance scoring.",
+            "content_points": [
+              "Extract top τ (τ=10) most frequent tokens from email, commitment, and subject.",
+              "Lemmatize tokens and remove stop-words for cleaner context.",
+              "Form enriched context E by concatenating commitment, subject, and top tokens.",
+              "Use enriched context to compute semantic similarity with candidate sentences."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Relevance Score Computation",
+            "role": "method_component",
+            "slide_purpose": "Explain the mathematical foundation of the relevance scoring mechanism.",
+            "content_points": [
+              "Compute Ω(s_i) as inner product in embedding space: h(s_i)^T h(E).",
+              "Evaluate three embedding functions: Term-frequency, FastText, and BERT.",
+              "Semantic similarity ensures alignment between enriched context and target sentence.",
+              "Subject and email topic compensate for short or less informative queries."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Evaluation of Unsupervised Approaches",
+            "role": "results",
+            "slide_purpose": "Present empirical results comparing different embedding methods.",
+            "content_points": [
+              "Measure proportion of emails with at least one helpful sentence in top K.",
+              "FastText (Max) outperforms others: 0.85 (K=2) and 0.92 (K=3).",
+              "Simple embedding methods surpass BERT without labeled supervision.",
+              "70.4% of replied-to emails contain helpful sentences in previous email body."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                2
+              ]
+            }
+          },
+          {
+            "slide_title": "Seq2Seq Model with Copy Mechanism",
+            "role": "method_component",
+            "slide_purpose": "Describe the generation stage leveraging the identified helpful sentences.",
+            "content_points": [
+              "Sequence-to-sequence model with copy mechanism for To-Do generation.",
+              "Directly copies named entities and task-specific keywords from input.",
+              "Ensures fidelity between email content and generated task.",
+              "Supports reliable task management by preserving critical information."
+            ],
+            "visual_refs": {
+              "images": [
+                3
+              ],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "4.2 To-Do Item Generation",
+      "raw_result": {
+        "section_name": "4.2 To-Do Item Generation",
+        "ppt_outline": [
+          {
+            "slide_title": "Task Formulation as Sequence-to-Sequence Learning",
+            "role": "method_overview",
+            "slide_purpose": "Introduce the core architecture of the To-Do item generation system",
+            "content_points": [
+              "Problem framed as Seq2Seq learning with attention mechanisms",
+              "Encoder processes concatenated email metadata: recipient, subject, commitment sentences",
+              "Decoder generates To-Do items using attention over encoder states",
+              "Special markers distinguish different input components"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [
+                1
+              ],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Model Variants: From Vanilla to Advanced Architectures",
+            "role": "method_component",
+            "slide_purpose": "Compare different model configurations for task generation",
+            "content_points": [
+              "Baseline: Vanilla Seq2Seq with single LSTM encoder-decoder",
+              "Enhanced version with attention mechanism for focused context",
+              "Copy mechanism variant for preserving key entities (names, dates)",
+              "BiFocal architecture with dual encoders for query/context separation"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [
+                2
+              ],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Quantitative Performance Analysis",
+            "role": "results",
+            "slide_purpose": "Present empirical evaluation of model effectiveness",
+            "content_points": [
+              "Copy mechanism achieves highest scores (BLEU-4: 0.23, ROUGE-L: 0.63)",
+              "Significant improvement over vanilla Seq2Seq baseline",
+              "Human judgment baseline provides competitive upper bound",
+              "Concatenation approach performs worst, validating neural design"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                4
+              ]
+            }
+          },
+          {
+            "slide_title": "Qualitative Output Analysis",
+            "role": "analysis_ablation",
+            "slide_purpose": "Examine strengths and limitations through generated examples",
+            "content_points": [
+              "Successful extraction of core commitments from emails",
+              "Entity copying errors reveal model limitations (e.g., name misspellings)",
+              "Partial preservation of temporal and referential accuracy",
+              "Comparison with human-generated gold standards"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                3
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "5 Experimental Results",
+      "raw_result": {
+        "section_name": "5 Experimental Results",
+        "ppt_outline": [
+          {
+            "slide_title": "Dataset Composition and Training Setup",
+            "role": "experiment_setup",
+            "slide_purpose": "Detail the dataset characteristics and training methodology",
+            "content_points": [
+              "Dataset: 9349 email instances annotated with To-Do items",
+              "Split: 7349 training, 1000 validation, 1000 test instances",
+              "Ground-truth selection: Annotation with fewer tokens",
+              "Median encoder input length: 43 tokens (includes commitment sentence)"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Quantitative Performance Evaluation",
+            "role": "results",
+            "slide_purpose": "Present comparative model performance metrics",
+            "content_points": [
+              "Evaluation metrics: BLEU-4 and ROUGE variants (F1-scores)",
+              "Human performance benchmark included",
+              "Trivial baseline: Concatenation of metadata fields",
+              "Best model: Seq2Seq with copying mechanism",
+              "Model achieves parity with human performance"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Qualitative Generation Examples",
+            "role": "analysis_ablation",
+            "slide_purpose": "Demonstrate practical output quality",
+            "content_points": [
+              "Table 3 showcases generated To-Do items",
+              "Comparative analysis of model vs human outputs",
+              "Effectiveness in capturing commitment semantics",
+              "Practical utility assessment"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                3
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "6 Conclusions",
+      "raw_result": {
+        "section_name": "6 Conclusions",
+        "ppt_outline": [
+          {
+            "slide_title": "Research Overview and Contributions",
+            "role": "takeaways",
+            "slide_purpose": "Summarize core research achievements and scientific contributions",
+            "content_points": [
+              "Pioneering work on automatic To-Do item generation from email context",
+              "Introduction of novel task/dataset for action-focused text intelligence",
+              "Two-stage neural framework achieves 0.23 BLEU and 0.63 ROUGE scores",
+              "First known solution for composing To-Do items from emails"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Future Research Trajectories",
+            "role": "limitation_future",
+            "slide_purpose": "Outline promising directions for advancing the research domain",
+            "content_points": [
+              "Architecture improvements for structured metadata utilization",
+              "Transition from two-stage to multi-task generation model",
+              "Joint context identification and text generation framework",
+              "Potential extensions to other productivity applications"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "References",
+      "raw_result": {
+        "section_name": "References",
+        "ppt_outline": [
+          {
+            "slide_title": "References",
+            "role": "takeaways",
+            "slide_purpose": "Summarize key contributions and provide references for further reading",
+            "content_points": [
+              "Smart-To-Do: A novel application for task management over emails",
+              "First work to address composing To-Do items from emails",
+              "Two-stage process leveraging neural text generation and sequence-to-sequence learning",
+              "Achieved BLEU and ROUGE scores of 0.23 and 0.63",
+              "New dataset introduced for generating To-Do items from emails"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "A Appendix",
+      "raw_result": {
+        "section_name": "A Appendix",
+        "ppt_outline": [
+          {
+            "slide_title": "Introduction to Smart-To-Do",
+            "role": "hook_context",
+            "slide_purpose": "Introduce the concept of Smart-To-Do and its relevance in email productivity.",
+            "content_points": [
+              "Email services increasingly integrate intelligent features to enhance productivity.",
+              "Smart-To-Do addresses task management by generating To-Do items from emails.",
+              "Focus on emails where senders promise to perform specific actions."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Related Work in Email Productivity",
+            "role": "related_work",
+            "slide_purpose": "Review existing solutions and research in email productivity enhancements.",
+            "content_points": [
+              "Existing tools focus on folder organization and email composition.",
+              "Limited research on automated task extraction from emails.",
+              "Gap in generating actionable To-Do items from email content."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Problem Definition",
+            "role": "problem_definition",
+            "slide_purpose": "Define the specific problem addressed by Smart-To-Do.",
+            "content_points": [
+              "Automatically generate To-Do items from emails with promised actions.",
+              "Challenges in identifying and extracting actionable tasks.",
+              "Need for accurate and context-aware task generation."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Methodological Overview",
+            "role": "method_overview",
+            "slide_purpose": "Outline the two-stage process for To-Do item generation.",
+            "content_points": [
+              "Leverage neural text generation techniques.",
+              "Sequence-to-sequence learning for task extraction.",
+              "Two-stage approach ensures context and action identification."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Experimental Results",
+            "role": "results",
+            "slide_purpose": "Present the performance metrics of Smart-To-Do.",
+            "content_points": [
+              "Achieved BLEU score of 0.23 and ROUGE score of 0.63.",
+              "First work to address To-Do item generation from emails.",
+              "Demonstrates feasibility and effectiveness of the approach."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Key Takeaways",
+            "role": "takeaways",
+            "slide_purpose": "Summarize the contributions and implications of Smart-To-Do.",
+            "content_points": [
+              "Introduces a novel application for email productivity.",
+              "Pioneers task management via automated To-Do generation.",
+              "Sets a foundation for future research in email-based task automation."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "A.1 Hyper-parameters",
+      "raw_result": {
+        "section_name": "A.1 Hyper-parameters",
+        "ppt_outline": [
+          {
+            "slide_title": "Model Architecture and Training Setup",
+            "role": "method_component",
+            "slide_purpose": "Detail the neural architecture and training configurations for reproducibility",
+            "content_points": [
+              "LSTM-based encoder-decoder architecture with Glove embeddings initialization",
+              "Separate vocabulary for source/target sequences prevents overfitting",
+              "Training uses OpenNMT framework in PyTorch with early stopping",
+              "Validation metrics (token accuracy & perplexity) guide training decisions"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Optimal Hyperparameter Configuration",
+            "role": "experiment_setup",
+            "slide_purpose": "Present the empirically validated hyperparameters for best performance",
+            "content_points": [
+              "Single-layer LSTM with 256 hidden units",
+              "Adagrad optimizer (LR=0.15) with gradient clipping (max_norm=2.0)",
+              "Dropout (0.5) and attention dropout (0.5) for regularization",
+              "Beam search (width=5) during inference for sequence generation"
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                5
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_name": "A.2 Illustrative Examples",
+      "raw_result": {
+        "section_name": "A.2 Illustrative Examples",
+        "ppt_outline": [
+          {
+            "slide_title": "Illustrative Examples Overview",
+            "role": "overview_figure",
+            "slide_purpose": "Introduce the dataset examples and the comparison methodology between human and model-generated To-Do items.",
+            "content_points": [
+              "Dataset includes email threads with highlighted commitment sentences.",
+              "Comparison between human-annotated (GOLD) and model-predicted (PRED) To-Do items.",
+              "Examples demonstrate varying complexity in task extraction.",
+              "Data anonymized for privacy (names changed, sentences paraphrased)."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          },
+          {
+            "slide_title": "Example 1: Partial Accuracy in Task Extraction",
+            "role": "results",
+            "slide_purpose": "Showcase a case where the model captures the core action but misses specific details.",
+            "content_points": [
+              "Sender: Beverly Evans requests action from Carlos Simmons.",
+              "GOLD: 'Forward PHP example to Beverly and Renata'.",
+              "PRED: 'Forward eCommerce PHP to Beverly'.",
+              "Model misses recipient 'Renata' and misinterprets 'PHP example'."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                6
+              ]
+            }
+          },
+          {
+            "slide_title": "Example 2: Rephrasing Actionable Commitments",
+            "role": "results",
+            "slide_purpose": "Demonstrate the model's ability to rephrase commitments while maintaining intent.",
+            "content_points": [
+              "Sender: Kirstin Barnes commits to submitting a presentation.",
+              "GOLD: 'Submit presentation with product enhancements'.",
+              "PRED: 'Submit the enhancements for product launch'.",
+              "Model captures intent but varies in phrasing and detail."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                7
+              ]
+            }
+          },
+          {
+            "slide_title": "Example 3: Contextual Specificity Challenge",
+            "role": "analysis_ablation",
+            "slide_purpose": "Highlight the model's challenge in preserving contextual details.",
+            "content_points": [
+              "Sender commits to updating R&D on software deployment.",
+              "GOLD: 'Keep r&d posted about deployment of software'.",
+              "PRED: 'Keep r&d posted about deployment'.",
+              "Model omits specific detail about software."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                8
+              ]
+            }
+          },
+          {
+            "slide_title": "Example 4: Intent Fidelity vs. Contextual Detail",
+            "role": "analysis_ablation",
+            "slide_purpose": "Illustrate the trade-off between capturing intent and contextual accuracy.",
+            "content_points": [
+              "Sender: Justine Sparrow commits to informing Roma Patterson.",
+              "GOLD: 'Let Roma know result'.",
+              "PRED: 'Let Roma know about the license agreement'.",
+              "Model incorporates additional context but diverges from intended task."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                9
+              ]
+            }
+          },
+          {
+            "slide_title": "Example 5: Generalization of Specific Actions",
+            "role": "analysis_ablation",
+            "slide_purpose": "Show how the model generalizes specific actions, losing precision.",
+            "content_points": [
+              "Sender: Rebecca Anderson requests guidance on a bash script.",
+              "GOLD: 'Talk to John to review bash script again'.",
+              "PRED: 'Talk to John to review the activities'.",
+              "Model generalizes 'bash script' to 'activities'."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                10
+              ]
+            }
+          },
+          {
+            "slide_title": "Example 6: Salient but Incorrect Information Focus",
+            "role": "analysis_ablation",
+            "slide_purpose": "Demonstrate the model's tendency to focus on incorrect salient information.",
+            "content_points": [
+              "Sender: Ramesh Paul commits to sending details.",
+              "GOLD: 'Send Gopal more details about tests in the desktop for v5'.",
+              "PRED: 'Send Gopal more details on presentation for the knowledge transfer'.",
+              "Model captures related but incorrect action."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                11
+              ]
+            }
+          },
+          {
+            "slide_title": "Example 7: Contextual Nuance Omission",
+            "role": "analysis_ablation",
+            "slide_purpose": "Highlight the challenge of capturing contextual nuances.",
+            "content_points": [
+              "Sender: Lori Howard mentions pending action on training.",
+              "GOLD: 'Let Karen know about the training provide for room reservations'.",
+              "PRED: 'Let Karen know about room reservations'.",
+              "Model omits mention of training."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                12
+              ]
+            }
+          },
+          {
+            "slide_title": "Example 8: Comprehensive Task Understanding",
+            "role": "results",
+            "slide_purpose": "Showcase a case where the model partially captures the task scope.",
+            "content_points": [
+              "Sender: Matthew White commits to preparing a training plan.",
+              "GOLD: 'Put together the training plan and the overall day agenda of software training'.",
+              "PRED: 'Put together the draft agenda for software training'.",
+              "Model misses broader scope of the task."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                13
+              ]
+            }
+          },
+          {
+            "slide_title": "Example 9: Successful Implicit Task Extraction",
+            "role": "results",
+            "slide_purpose": "Demonstrate the model's ability to identify implicit action items.",
+            "content_points": [
+              "Sender: Diana Wilson tracks a DHL package.",
+              "GOLD and PRED: 'Let Diana know about DHL package from IBM'.",
+              "Model successfully extracts implicit task commitment."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": [
+                14
+              ]
+            }
+          },
+          {
+            "slide_title": "Key Takeaways from Illustrative Examples",
+            "role": "takeaways",
+            "slide_purpose": "Summarize the insights gained from the examples.",
+            "content_points": [
+              "Model captures core actions but varies in detail preservation.",
+              "Challenges include contextual specificity and intent fidelity.",
+              "Successful in implicit task extraction but prone to generalization.",
+              "Room for improvement in comprehensive task understanding."
+            ],
+            "visual_refs": {
+              "images": [],
+              "equations": [],
+              "tables": []
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "statistics": {
+    "total": 14,
+    "success": 14,
+    "failed": 0
+  }
+}

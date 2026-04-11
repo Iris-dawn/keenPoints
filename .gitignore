@@ -43,7 +43,6 @@ logs/
 
 # 上传和输出文件
 uploads/
-outputs/
 temp/
 
 # 测试

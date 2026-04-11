@@ -1,0 +1,452 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>Variant Comparison — HiAGM-LA vs HiAGM-TP</title>
+    <style>
+        /* =========================================
+           1. 配色方案 (CSS Variables)
+           ========================================= */
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+            --hlink: #5FCBFB;
+        }
+
+        /* =========================================
+           2. 全局重置与画布
+           ========================================= */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 960×540 幻灯片容器 */
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        /* =========================================
+           3. 固定布局元素
+           ========================================= */
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 26px;
+            color: var(--accent1);
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        /* =========================================
+           4. 要点区域（顶部三条）
+           ========================================= */
+        .bullets {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            top: 72px;
+            z-index: 5;
+        }
+
+        .bullet-item {
+            font-size: 12.5px;
+            color: var(--dk1);
+            line-height: 1.45;
+            padding: 3px 0 3px 18px;
+            position: relative;
+        }
+
+        .bullet-item+.bullet-item {
+            border-top: 1px solid var(--dk2);
+        }
+
+        .bullet-item::before {
+            content: '▶';
+            color: var(--accent1);
+            font-size: 9px;
+            position: absolute;
+            left: 0;
+            top: 5px;
+        }
+
+        .bullet-item strong {
+            color: var(--accent1);
+        }
+
+        /* =========================================
+           5. 结果表格
+           ========================================= */
+        .table-wrapper {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            top: 163px;
+            bottom: 47px;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        table.result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11.5px;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            table-layout: fixed;
+        }
+
+        /* 表头第一行 (数据集组) */
+        table.result-table thead tr:first-child th {
+            background-color: var(--accent1);
+            color: var(--lt1);
+            font-weight: bold;
+            font-size: 12px;
+            padding: 5px 3px;
+            border: 1px solid var(--accent2);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* 表头第二行 (Micro/Macro) */
+        table.result-table thead tr:nth-child(2) th {
+            background-color: var(--accent2);
+            color: var(--lt1);
+            font-size: 10.5px;
+            font-weight: normal;
+            padding: 3px 2px;
+            border: 1px solid var(--accent3);
+            text-align: center;
+        }
+
+        /* 普通数据行 */
+        table.result-table tbody td {
+            border: 1px solid var(--accent4);
+            padding: 4px 3px;
+            text-align: center;
+            vertical-align: middle;
+            color: var(--dk1);
+            background-color: var(--lt2);
+        }
+
+        /* 分组标题行 */
+        .section-row td {
+            background-color: var(--dk2) !important;
+            color: var(--accent1);
+            font-weight: bold;
+            font-size: 11px;
+            text-align: left;
+            padding: 3px 10px;
+            border: 1px solid var(--accent3);
+            letter-spacing: 0.3px;
+        }
+
+        /* 模型名列 左对齐 */
+        td.model-name {
+            text-align: left;
+            padding-left: 14px;
+            font-size: 11px;
+            color: var(--accent6);
+        }
+
+        /* HiAGM-TP 行浅底色 */
+        .hiagm-tp td:not(.section-row *) {
+            background-color: rgba(43, 70, 99, 0.05) !important;
+        }
+
+        /* 最优值加粗着色 */
+        .best {
+            font-weight: bold;
+            color: var(--accent1);
+        }
+
+        /* 数据行隔行 */
+        tr.data-row:nth-of-type(even) td {
+            background-color: rgba(184, 202, 225, 0.12);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+
+        <!-- ======== 装饰层 ======== -->
+
+        <!-- 左上角平行四边形 (accent1) -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                fill-rule="nonzero" />
+        </svg>
+
+        <!-- 小装饰条 (accent4) -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+        </svg>
+
+        <!-- 顶部分割线 -->
+        <div class="divider-line" style="top:64.7px;"></div>
+
+        <!-- 底部分割线 -->
+        <div class="divider-line" style="top:493.2px;"></div>
+
+        <!-- 右侧边缘条 (accent4) -->
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+
+
+        <!-- 校徽 Logo -->
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" style="width:100%;height:100%;object-fit:contain;display:block;">
+        </div>
+
+        <!-- 校训矢量图 -->
+        <div class="shape" style="left:45px; top:502px; width:200px; height:25px;">
+            <img src="D:\MyFiles\AIPPT\Experiment\校训.svg" alt="Bottom Decoration" class="img-fit"
+                style="object-position: left bottom;">
+        </div>
+
+        <!-- ======== 可编辑内容 ======== -->
+
+        <!-- 章节号 -->
+        <div class="slide-section">3</div>
+
+        <!-- 页面标题 -->
+        <div class="slide-title">
+            <h1>Variant Comparison</h1>
+        </div>
+
+        <!-- 关键发现要点 -->
+        <div class="bullets">
+            <div class="bullet-item">
+                Both <strong>HiAGM-LA</strong> and <strong>HiAGM-TP</strong> consistently outperform all global text
+                classification baselines (TextRNN / TextCNN / TextRCNN) across four benchmark datasets.
+            </div>
+            <div class="bullet-item">
+                Enhanced text features are beneficial — HiAGM-TP achieves higher Macro-F1 scores than HiAGM-LA
+                in both <em>Hierarchy-GCN</em> and <em>BiTreeLSTM</em> structure encoders.
+            </div>
+            <div class="bullet-item">
+                <strong>HiAGM-TP (GCN)</strong> records the best Macro-F1 on NYT (<strong>60.83</strong>) and WOS
+                (<strong>80.28</strong>), confirming the advantage of direct text-to-hierarchy feature propagation.
+            </div>
+        </div>
+
+        <!-- 结果对比表 -->
+        <div class="table-wrapper">
+            <table class="result-table">
+                <!-- 9列宽度分配：Model 90px + 8×100px = 890px -->
+                <col style="width:90px">
+                <col style="width:100px">
+                <col style="width:100px">
+                <col style="width:100px">
+                <col style="width:100px">
+                <col style="width:100px">
+                <col style="width:100px">
+                <col style="width:100px">
+                <col style="width:100px">
+
+                <thead>
+                    <tr>
+                        <th rowspan="2">Model</th>
+                        <th colspan="2">RCV1-V2</th>
+                        <th colspan="2">RCV1-V2-R</th>
+                        <th colspan="2">WOS</th>
+                        <th colspan="2">NYT</th>
+                    </tr>
+                    <tr>
+                        <th>Micro-F1</th>
+                        <th>Macro-F1</th>
+                        <th>Micro-F1</th>
+                        <th>Macro-F1</th>
+                        <th>Micro-F1</th>
+                        <th>Macro-F1</th>
+                        <th>Micro-F1</th>
+                        <th>Macro-F1</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- ── Baseline 分组 ── -->
+                    <tr class="section-row">
+                        <td colspan="9">Global Text Classification Baseline</td>
+                    </tr>
+                    <tr class="data-row">
+                        <td class="model-name">TextRNN</td>
+                        <td>81.10</td>
+                        <td>51.09</td>
+                        <td>87.78</td>
+                        <td>70.42</td>
+                        <td>77.94</td>
+                        <td>69.65</td>
+                        <td>70.29</td>
+                        <td>53.06</td>
+                    </tr>
+                    <tr class="data-row">
+                        <td class="model-name">TextCNN</td>
+                        <td>79.37</td>
+                        <td>55.45</td>
+                        <td>84.97</td>
+                        <td>68.06</td>
+                        <td>82.00</td>
+                        <td>76.18</td>
+                        <td>70.11</td>
+                        <td>56.84</td>
+                    </tr>
+                    <tr class="data-row">
+                        <td class="model-name">TextRCNN</td>
+                        <td>81.57</td>
+                        <td>59.25</td>
+                        <td>88.32</td>
+                        <td>72.23</td>
+                        <td>83.55</td>
+                        <td>76.99</td>
+                        <td>70.83</td>
+                        <td>56.18</td>
+                    </tr>
+
+                    <!-- ── HiAGM-LA 分组 ── -->
+                    <tr class="section-row">
+                        <td colspan="9">HiAGM-LA</td>
+                    </tr>
+                    <tr class="data-row">
+                        <td class="model-name">GCN</td>
+                        <td>82.21</td>
+                        <td>61.65</td>
+                        <td>88.49</td>
+                        <td>73.14</td>
+                        <td>84.61</td>
+                        <td>79.37</td>
+                        <td>72.35</td>
+                        <td>58.67</td>
+                    </tr>
+                    <tr class="data-row">
+                        <td class="model-name">TreeLSTM</td>
+                        <td>82.54</td>
+                        <td>61.90</td>
+                        <td>88.47</td>
+                        <td>72.81</td>
+                        <td>84.82</td>
+                        <td>79.51</td>
+                        <td>72.50</td>
+                        <td>58.86</td>
+                    </tr>
+
+                    <!-- ── HiAGM-TP 分组 ── -->
+                    <tr class="section-row">
+                        <td colspan="9">HiAGM-TP</td>
+                    </tr>
+                    <tr class="data-row hiagm-tp">
+                        <td class="model-name">GCN</td>
+                        <td class="best">83.96</td>
+                        <td class="best">63.35</td>
+                        <td>88.64</td>
+                        <td>74.00</td>
+                        <td class="best">85.82</td>
+                        <td class="best">80.28</td>
+                        <td class="best">74.97</td>
+                        <td class="best">60.83</td>
+                    </tr>
+                    <tr class="data-row hiagm-tp">
+                        <td class="model-name">TreeLSTM</td>
+                        <td>83.20</td>
+                        <td>62.32</td>
+                        <td class="best">88.86</td>
+                        <td class="best">74.16</td>
+                        <td>85.18</td>
+                        <td>79.95</td>
+                        <td>74.43</td>
+                        <td>60.76</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="slide-footer-info">Page 16</div>
+
+    </div>
+</body>
+
+</html>

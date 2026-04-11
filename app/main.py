@@ -27,7 +27,12 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(router, prefix="/api")
+
+    # Static file mounts
     app.mount("/static", StaticFiles(directory="static"), name="static")
+    app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
+    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+    app.mount("/downloads", StaticFiles(directory="downloads"), name="downloads")
 
     logger.info(f"[APP] {settings.APP_NAME} v{settings.VERSION} ready")
     return app

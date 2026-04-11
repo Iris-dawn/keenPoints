@@ -1,0 +1,339 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>HiAGM-TP: Text Propagation Through Hierarchy</title>
+    <script>
+        MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }, startup: { typeset: true } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+    <style>
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--accent1);
+            font-weight: bold;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        /* Top row: two cards side by side */
+        .top-row {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            top: 72px;
+            height: 190px;
+            display: flex;
+            gap: 14px;
+            z-index: 5;
+        }
+
+        .card {
+            flex: 1;
+            background: #fff;
+            border: 1px solid var(--accent4);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            background: var(--accent6);
+            color: var(--lt1);
+            padding: 7px 14px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .card-body {
+            flex: 1;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .point {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .point .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent6);
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .point p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--dk1);
+        }
+
+        .point p em {
+            color: var(--accent6);
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .sep {
+            height: 1px;
+            background: var(--dk2);
+        }
+
+        /* Bottom: equation panel */
+        .eq-panel {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            top: 275px;
+            bottom: 50px;
+            background: #fff;
+            border: 1px solid var(--accent4);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            z-index: 5;
+        }
+
+        .eq-header {
+            background: var(--accent1);
+            color: var(--lt1);
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .eq-body {
+            flex: 1;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .eq-main {
+            flex: 1;
+        }
+
+        .eq-note {
+            flex: 1;
+            font-size: 11.5px;
+            color: var(--accent6);
+            line-height: 1.6;
+        }
+
+        .compare-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .cmp-box {
+            flex: 1;
+            background: var(--dk2);
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-size: 11px;
+            color: var(--accent6);
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .cmp-box b {
+            color: var(--accent1);
+            display: block;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- Decoration -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                fill-rule="nonzero" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+
+        <div class="slide-section">8</div>
+        <div class="slide-title">
+            <h1>HiAGM-TP: Text Propagation Through Hierarchy</h1>
+        </div>
+
+        <div class="top-row">
+            <div class="card">
+                <div class="card-header">Core Mechanism</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Directly feeds <em>text features</em> into hierarchy encoders (deductive approach)</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Uses linear transformation $\boldsymbol{M}$ to <em>align text features</em> with label
+                            structure</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">Characteristics</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p><em>Propagates textual information</em> through taxonomic hierarchy via structure encoder</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Higher computational complexity but <em>easier convergence</em> than HiAGM-LA</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equation panel -->
+        <div class="eq-panel">
+            <div class="eq-header">Eq. (6) — Text Feature Transformation</div>
+            <div class="eq-body">
+                <div class="eq-main">
+                    $$\boldsymbol{V} = \boldsymbol{M}\boldsymbol{S}$$
+                </div>
+                <div class="eq-note">
+                    $\boldsymbol{S}$: continuous text representation from CNN (shape: $n \times d_c$)<br>
+                    $\boldsymbol{M}$: trainable linear transformation matrix<br>
+                    $\boldsymbol{V}$: node input matrix for structure encoder (shape: $|L| \times d_l$)<br><br>
+                    <div class="compare-row">
+                        <div class="cmp-box"><b>HiAGM-LA</b>uses attention to extract label-wise features from
+                            $\boldsymbol{S}$</div>
+                        <div class="cmp-box"><b>HiAGM-TP</b>projects $\boldsymbol{S}$ via $\boldsymbol{M}$ then
+                            propagates through hierarchy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer-info">Page 13</div>
+    </div>
+</body>
+
+</html>

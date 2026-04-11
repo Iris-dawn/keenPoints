@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>Key Contributions and Results</title>
+    <style>
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent1);
+            font-weight: bold;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        .content-area {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            top: 72px;
+            bottom: 100px;
+            display: flex;
+            gap: 14px;
+            align-items: stretch;
+            z-index: 5;
+        }
+
+        .card {
+            flex: 1;
+            border: 1px solid var(--accent4);
+            border-radius: 6px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--accent1);
+            color: var(--lt1);
+            padding: 8px 14px;
+            font-size: 12.5px;
+            font-weight: bold;
+        }
+
+        .card-header.alt {
+            background: var(--accent6);
+        }
+
+        .card-body {
+            flex: 1;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .point {
+            display: flex;
+            gap: 9px;
+            align-items: flex-start;
+        }
+
+        .point .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent1);
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .card.alt .point .dot {
+            background: var(--accent6);
+        }
+
+        .point p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.55;
+            color: var(--dk1);
+        }
+
+        .point p em {
+            color: var(--accent1);
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .card.alt .point p em {
+            color: var(--accent6);
+        }
+
+        .sep {
+            height: 1px;
+            background: var(--dk2);
+            margin: 2px 0;
+        }
+
+        /* Results metrics strip */
+        .metrics-strip {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            bottom: 52px;
+            height: 40px;
+            display: flex;
+            gap: 10px;
+            z-index: 5;
+        }
+
+        .metric-box {
+            flex: 1;
+            border-radius: 5px;
+            background: var(--accent1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+        }
+
+        .metric-label {
+            font-size: 9.5px;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--lt1);
+            line-height: 1.2;
+        }
+
+        .metric-box.alt {
+            background: var(--accent2);
+        }
+
+        .metric-box.light {
+            background: var(--dk2);
+        }
+
+        .metric-box.light .metric-label {
+            color: var(--accent6);
+        }
+
+        .metric-box.light .metric-value {
+            color: var(--accent1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- Decoration -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                fill-rule="nonzero" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+
+        <div class="slide-section">14</div>
+        <div class="slide-title">
+            <h1>Key Contributions and Results</h1>
+        </div>
+
+        <div class="content-area">
+            <!-- Contributions -->
+            <div class="card">
+                <div class="card-header">Contributions</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Proposed an <em>end-to-end hierarchy-aware global model</em> for HTC</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Introduced <em>bidirectional TreeLSTM</em> and <em>hierarchy-GCN</em> as structure encoders
+                        </p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Extended framework into <em>parallel</em> (multi-label attention) and <em>serial</em> (text
+                            propagation) variants</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="card alt">
+                <div class="card-header alt">Empirical Achievements</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Achieved <em>significant improvements</em> on three benchmark datasets (RCV1-V2, WOS, NYT)
+                        </p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Particularly effective for <em>low-frequency labels</em> deep in the hierarchy</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Outperformed <em>state-of-the-art</em> on RCV1-V2 dataset with best model achieving Macro-F1
+                            63.35%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics strip -->
+        <div class="metrics-strip">
+            <div class="metric-box">
+                <div class="metric-label">BEST MACRO-F1</div>
+                <div class="metric-value">63.35%</div>
+            </div>
+            <div class="metric-box alt">
+                <div class="metric-label">BEST MICRO-F1</div>
+                <div class="metric-value">83.96%</div>
+            </div>
+            <div class="metric-box light">
+                <div class="metric-label">DATASETS</div>
+                <div class="metric-value">RCV1 · WOS · NYT</div>
+            </div>
+            <div class="metric-box light">
+                <div class="metric-label">ENCODERS</div>
+                <div class="metric-value">BiTreeLSTM · Hier-GCN</div>
+            </div>
+            <div class="metric-box light">
+                <div class="metric-label">VARIANTS</div>
+                <div class="metric-value">HiAGM-LA · HiAGM-TP</div>
+            </div>
+        </div>
+
+        <div class="slide-footer-info">Page 21</div>
+    </div>
+</body>
+
+</html>

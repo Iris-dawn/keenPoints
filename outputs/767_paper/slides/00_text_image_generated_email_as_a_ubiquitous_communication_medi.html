@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email as a Ubiquitous Communication Medium</title>
+    <style>
+        :root {
+            --dk1:#000000;
+            --lt1:#FFFFFF;
+            --dk2:#E8EEF2;
+            --lt2:#F9FAFB;
+            --accent1:#2B4663;
+            --accent2:#5C7885;
+            --accent3:#94ACBC;
+            --accent4:#B9CAE1;
+            --accent5:#97ABBD;
+            --accent6:#3B606F;
+            --hlink:#5FCBFB
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 1px;
+            border-top: 1px solid var(--accent3);
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 28px;
+            color: var(--accent1);
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        .content-col {
+            position: absolute;
+            left: 35px;
+            top: 72px;
+            width: 400px;
+            bottom: 50px;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .bullet-item {
+            padding: 10px 10px 10px 16px;
+            border-left: 3px solid var(--accent1);
+            background: rgba(43,70,99,0.04);
+            border-radius: 0 4px 4px 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--dk1);
+        }
+
+        .col-divider {
+            position: absolute;
+            left: 445px;
+            top: 75px;
+            bottom: 55px;
+            width: 1px;
+            background: var(--accent4);
+            z-index: 4;
+        }
+
+        .image-col {
+            position: absolute;
+            left: 455px;
+            top: 72px;
+            right: 28px;
+            bottom: 50px;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-frame {
+            width: 100%;
+            flex: 1;
+            border-radius: 6px;
+            border: 1px solid var(--accent4);
+            overflow: hidden;
+            background: var(--lt1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-frame img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .image-caption {
+            margin-top: 6px;
+            font-size: 10px;
+            color: var(--accent6);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z"
+                  fill="#2B4663" stroke="none" fill-rule="nonzero"/>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z"
+                  fill="#B9CAE1" stroke="#B9CAE1" stroke-width="3" fill-rule="nonzero"/>
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:#B9CAE1;"></div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="../../../app/services/template/assets/BIT/logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="../../../app/services/template/assets/BIT/校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+        <div class="slide-section">1</div>
+        <div class="slide-title"><h1>Email as a Ubiquitous Communication Medium</h1></div>
+        <div class="slide-footer-info">Page 1</div>
+
+        <div class="content-col">
+            <div class="bullet-item">Email dominates enterprise communication (Radicati & Levenstein, 2015)</div>
+            <div class="bullet-item">Service providers innovate to enhance user experience across applications</div>
+            <div class="bullet-item">Existing features: Smart Reply (Kannan et al., 2016) and SmartCompose (Chen et al., 2019)</div>
+            <div class="bullet-item">Emerging task management tools: Gmail's Nudge and Outlook Insights</div>
+        </div>
+        <div class="col-divider"></div>
+        <div class="image-col">
+            <div class="image-frame">
+                <img src="../../../app/services/template/assets/BIT/generated-email-communication.png" alt="Email Communication Visualization">
+            </div>
+            <p class="image-caption">Visualization of email communication patterns and features</p>
+        </div>
+    </div>
+</body>
+</html>

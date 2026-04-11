@@ -1,0 +1,311 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>Benchmark Datasets</title>
+    <style>
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent1);
+            font-weight: bold;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        /* Bullets strip at top */
+        .bullets-area {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            top: 72px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .bullet-chip {
+            flex: 1;
+            background: var(--dk2);
+            border: 1px solid var(--accent4);
+            border-radius: 5px;
+            padding: 6px 10px;
+            font-size: 11.5px;
+            line-height: 1.45;
+            color: var(--accent6);
+            display: flex;
+            gap: 7px;
+            align-items: flex-start;
+        }
+
+        .bullet-chip .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent1);
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .bullet-chip b {
+            color: var(--accent1);
+        }
+
+        /* Table area */
+        .table-wrapper {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            top: 165px;
+            bottom: 47px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        table.result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table.result-table thead tr:first-child th {
+            background: var(--accent1);
+            color: var(--lt1);
+            padding: 10px 14px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        table.result-table thead tr:nth-child(2) th {
+            background: var(--accent2);
+            color: var(--lt1);
+            padding: 8px 14px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12.5px;
+        }
+
+        table.result-table tbody tr {
+            border-bottom: 1px solid var(--accent4);
+        }
+
+        table.result-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        table.result-table tbody td {
+            padding: 11px 14px;
+            text-align: center;
+            color: var(--dk1);
+            font-size: 14px;
+        }
+
+        table.result-table tbody tr:nth-child(even) td {
+            background: var(--dk2);
+        }
+
+        table.result-table tbody td:first-child {
+            font-weight: bold;
+            color: var(--accent1);
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- Decoration -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                fill-rule="nonzero" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+
+        <div class="slide-section">10</div>
+        <div class="slide-title">
+            <h1>Benchmark Datasets</h1>
+        </div>
+
+        <!-- Bullet chips -->
+        <div class="bullets-area">
+            <div class="bullet-chip">
+                <div class="dot"></div>
+                <div>Three benchmarks: <b>RCV1-V2</b> (news), <b>WOS</b> (academic), <b>NYT</b> (news)</div>
+            </div>
+            <div class="bullet-chip">
+                <div class="dot"></div>
+                <div>All annotated with <b>hierarchical taxonomic labels</b></div>
+            </div>
+            <div class="bullet-chip">
+                <div class="dot"></div>
+                <div><b>WOS</b>: single-path HTC; <b>RCV1</b> & <b>NYT</b>: multi-path tags</div>
+            </div>
+            <div class="bullet-chip">
+                <div class="dot"></div>
+                <div>Benchmark split for RCV1-V2; random splits for WOS and NYT</div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Dataset</th>
+                        <th>|L|</th>
+                        <th>Depth</th>
+                        <th>Avg(|L<sub>i</sub>|)</th>
+                        <th>Train</th>
+                        <th>Val</th>
+                        <th>Test</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RCV1</td>
+                        <td>103</td>
+                        <td>4</td>
+                        <td>3.24</td>
+                        <td>20,833</td>
+                        <td>2,316</td>
+                        <td>781,265</td>
+                    </tr>
+                    <tr>
+                        <td>WOS</td>
+                        <td>141</td>
+                        <td>2</td>
+                        <td>2.0</td>
+                        <td>30,070</td>
+                        <td>7,518</td>
+                        <td>9,397</td>
+                    </tr>
+                    <tr>
+                        <td>NYT</td>
+                        <td>166</td>
+                        <td>8</td>
+                        <td>7.6</td>
+                        <td>23,345</td>
+                        <td>5,834</td>
+                        <td>7,292</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="slide-footer-info">Page 15</div>
+    </div>
+</body>
+
+</html>

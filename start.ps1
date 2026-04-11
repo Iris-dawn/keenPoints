@@ -3,6 +3,21 @@
 Write-Host "🚀 启动 Academic Paper Assistant..." -ForegroundColor Green
 Write-Host ""
 
+# ── 激活 conda 环境 ────────────────────────────────────────────────────────
+$condaHook = "D:\Application\Anaconda\shell\condabin\conda-hook.ps1"
+if (Test-Path $condaHook) {
+    & $condaHook
+    conda activate keenPoint
+    Write-Host "✅ conda 环境已激活: keenPoint" -ForegroundColor Green
+}
+else {
+    Write-Host "⚠️  未找到 conda-hook，请手动执行 conda activate keenPoint" -ForegroundColor Yellow
+}
+
+# 确认使用正确的 Python
+$pythonExe = (Get-Command python -ErrorAction SilentlyContinue).Source
+Write-Host "🐍 Python: $pythonExe" -ForegroundColor DarkGray
+
 # 检查 Python 环境
 Write-Host "📋 检查 Python 环境..." -ForegroundColor Cyan
 python --version
@@ -11,13 +26,14 @@ python --version
 Write-Host ""
 Write-Host "📦 检查依赖..." -ForegroundColor Cyan
 
-$pipList = pip list
+$pipList = python -m pip list
 if ($pipList -match "fastapi") {
     Write-Host "✅ 依赖已安装" -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "⚠️ 需要安装依赖" -ForegroundColor Yellow
     Write-Host "正在安装依赖..." -ForegroundColor Cyan
-    pip install -r requirements.txt
+    python -m pip install -r requirements.txt
 }
 
 # 创建必要的目录
@@ -52,4 +68,4 @@ Write-Host "按 Ctrl+C 停止服务器" -ForegroundColor Gray
 Write-Host ""
 
 # 启动服务器
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000

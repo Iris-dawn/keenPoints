@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>Related Work in HTC</title>
+    <style>
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .6);
+            background-color: var(--lt2);
+        }
+
+        .shape {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 25px;
+            height: 55px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lt1);
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px;
+            top: 15px;
+            right: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent1);
+            font-weight: bold;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px;
+            bottom: 15px;
+            font-size: 12px;
+            color: var(--accent5);
+            z-index: 10;
+        }
+
+        .content-area {
+            position: absolute;
+            left: 35px;
+            right: 35px;
+            top: 72px;
+            bottom: 47px;
+            display: flex;
+            gap: 11px;
+            align-items: stretch;
+            z-index: 5;
+        }
+
+        .card {
+            flex: 1;
+            border: 1px solid var(--accent4);
+            border-radius: 6px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-header {
+            color: var(--lt1);
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+        }
+
+        .card-header.h1 {
+            background: var(--accent1);
+        }
+
+        .card-header.h2 {
+            background: var(--accent2);
+        }
+
+        .card-header.h6 {
+            background: var(--accent6);
+        }
+
+        .card-body {
+            flex: 1;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .point {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .point .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .dot-h1 {
+            background: var(--accent1);
+        }
+
+        .dot-h2 {
+            background: var(--accent2);
+        }
+
+        .dot-h6 {
+            background: var(--accent6);
+        }
+
+        .point p {
+            margin: 0;
+            font-size: 11.5px;
+            line-height: 1.5;
+            color: var(--dk1);
+        }
+
+        .point p b {
+            color: var(--accent1);
+        }
+
+        .sep {
+            height: 1px;
+            background: var(--dk2);
+            margin: 1px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- Decoration -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z" fill="#2B4663" stroke="none"
+                fill-rule="nonzero" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z" fill="#B9CAE1" stroke="#B9CAE1"
+                stroke-width="3" fill-rule="nonzero" />
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);">
+        </div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+
+        <div class="slide-section">3</div>
+        <div class="slide-title">
+            <h1>Related Work in HTC</h1>
+        </div>
+
+        <div class="content-area">
+            <!-- Card 1: Local Approaches -->
+            <div class="card">
+                <div class="card-header h1">📌 Local Approaches</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot dot-h1"></div>
+                        <p>Includes <b>LCN</b> (per node), <b>LCPN</b> (per parent), and <b>LCL</b> (per level)
+                            classifiers</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h1"></div>
+                        <p>LCN transfers parameters of the <b>parent model</b> for child models</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h1"></div>
+                        <p>LCL combined with global optimizations <b>alleviates exposure bias</b></p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h1"></div>
+                        <p><b>Text-GCN</b> decomposes the hierarchy into <b>subgraphs</b> for classification</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Global Approaches -->
+            <div class="card">
+                <div class="card-header h2">🌐 Global Approaches</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot dot-h2"></div>
+                        <p>Enhance flat MLC models by incorporating <b>hierarchy information</b></p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h2"></div>
+                        <p>Includes <b>Hierarchical-SVM</b>, recursive regularization, and deep learning architectures
+                        </p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h2"></div>
+                        <p><b>Seq2seq</b>, meta-learning, and capsule networks focus on hierarchical path constraints
+                        </p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h2"></div>
+                        <p>HiAGM introduces <b>hierarchy-aware global modeling</b> with label-wise text features</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Attention Mechanisms -->
+            <div class="card">
+                <div class="card-header h6">🔍 Attention Mechanisms</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot dot-h6"></div>
+                        <p>Attention mechanisms introduced in MLC for tasks like <b>ICD coding</b></p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h6"></div>
+                        <p><b>GraphCNN</b> trains label representation and conducts multi-label attention</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h6"></div>
+                        <p><b>AttentionXML</b> converts MLC to a multi-label attention LCL model</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot dot-h6"></div>
+                        <p><b>HiAGM-LA</b> employs multi-label attention with a simplified structure encoder</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer-info">Page 3</div>
+    </div>
+</body>
+
+</html>

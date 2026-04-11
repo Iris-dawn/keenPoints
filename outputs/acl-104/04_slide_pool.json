@@ -1,0 +1,860 @@
+{
+  "slides": [
+    {
+      "slide_id": 0,
+      "slide_title": "Introduction to Hierarchical Text Classification",
+      "section_name": "1 Introduction",
+      "role": "hook_context",
+      "slide_purpose": "Introduce the background and motivation for hierarchical text classification (HTC).",
+      "content_points": [
+        "Text classification is widely used in NLP applications like sentiment analysis and document categorization.",
+        "Hierarchical text classification (HTC) is a multi-label classification problem with a taxonomic hierarchy.",
+        "The taxonomic hierarchy is modeled as a tree or directed acyclic graph."
+      ],
+      "visual_refs": {
+        "images": [
+          {
+            "type": "image",
+            "id": 1,
+            "img_path": "images/b8f39cac1148ea9ff7206aafcc5c8c228f8e1768d6b1f09f571ec4485e6dba74.jpg",
+            "caption": "Input text: [\"David Beckham's new book will be published.\"] Figure 1: This short sample is tagged with news, sports, football, features and books. Note that HTC could be either a single-path or a multi-path problem.",
+            "analysis_text": "This figure illustrates a taxonomic hierarchy used in hierarchical text classification (HTC), where categories are organized in a tree-like structure. The root node branches into 'News' and 'Features', with 'News' further subdividing into 'Sports' and 'Health', and 'Features' into 'Art' and 'Books'. 'Sports' then splits into 'Football' and 'Basketball'. This hierarchy demonstrates how labels can be structured hierarchically, allowing for multi-path classification—e.g., a document about David Beckham's book could be classified under both 'Sports' and 'Books'. The visual emphasizes the importance of modeling label dependencies across levels to capture semantic relationships, which is central to the proposed Hi-AGM framework that leverages such structures via hierarchy-aware encoders."
+          }
+        ],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 1,
+      "slide_title": "Limitations of Existing Approaches",
+      "section_name": "1 Introduction",
+      "role": "gap_limitations",
+      "slide_purpose": "Highlight the gaps and limitations in current HTC methods.",
+      "content_points": [
+        "Local approaches construct multiple models but lack holistic structural information.",
+        "Global approaches treat HTC as flat MLC but ignore fine-grained label correlations.",
+        "No existing method encodes holistic label structure for label correlation features."
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 2,
+      "slide_title": "Proposed Solution: Hi-AGM",
+      "section_name": "1 Introduction",
+      "role": "insight_thesis",
+      "slide_purpose": "Present the key insight and contributions of the proposed Hi-AGM model.",
+      "content_points": [
+        "Formulate the hierarchy as a directed graph with prior probabilities of label dependencies.",
+        "Introduce Hi-AGM with hierarchy-aware structure encoders (TreeLSTM or hierarchy-GCN).",
+        "Two variants: HiAGM-LA (inductive) and HiAGM-TP (deductive) for feature aggregation."
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 3,
+      "slide_title": "Categories of Existing Approaches",
+      "section_name": "2 Related Work",
+      "role": "related_work",
+      "slide_purpose": "To categorize and explain existing approaches in hierarchical text classification",
+      "content_points": [
+        "Local approaches: LCN, LCPN, LCL",
+        "Global approaches: modifications of flat MLC models",
+        "Deep learning architectures in global models",
+        "Attention mechanism in MLC"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 4,
+      "slide_title": "Hierarchical Structure Illustration",
+      "section_name": "2 Related Work",
+      "role": "related_work",
+      "slide_purpose": "To visualize the taxonomic hierarchy used in hierarchical text classification",
+      "content_points": [
+        "Nodes represent categories",
+        "Edges indicate parent-child relationships",
+        "Prior probabilities reflect label dependencies",
+        "Guides label embedding and feature propagation"
+      ],
+      "visual_refs": {
+        "images": [
+          {
+            "type": "image",
+            "id": 2,
+            "img_path": "images/992f4b9db5d2e3db2a2b674cc313bde1f2f41cd7ec888b19c3a409924b8b67e6.jpg",
+            "caption": "Figure 2: Example of the taxonomic hierarchy. The number indicates the prior probability of label dependencies according to the training corpus.",
+            "analysis_text": "This figure illustrates a taxonomic hierarchy used in hierarchical text classification, where nodes represent categories and edges indicate parent-child relationships. The root node branches into 'News' and 'Features', with further subdivisions such as 'Sports' (with children 'Football' and 'Basketball') and 'Health' under 'News', and 'Art' and 'Books' under 'Features'. Each edge is labeled with a prior probability reflecting the likelihood of label dependencies based on training data, enabling the model to capture structural relationships between labels. This hierarchical structure informs the design of the proposed Hi-AGM framework by providing a directed graph representation that guides both label embedding and feature propagation processes."
+          }
+        ],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 5,
+      "slide_title": "Comparison with Previous Works",
+      "section_name": "2 Related Work",
+      "role": "related_work",
+      "slide_purpose": "To highlight the differences and improvements of the proposed method",
+      "content_points": [
+        "Previous models focus on improving decoders",
+        "HiAGM extracts label-wise text features with hierarchy encoders",
+        "HiAGM-LA employs multi-label attention with simplified structure encoder",
+        "Reduces computational complexity"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 6,
+      "slide_title": "Hierarchical Text Classification Overview",
+      "section_name": "3 Problem Definition",
+      "role": "problem_definition",
+      "slide_purpose": "Introduce the concept and structure of hierarchical text classification",
+      "content_points": [
+        "Hierarchical text classification (HTC) organizes labels with a predefined taxonomic hierarchy",
+        "Hierarchy groups label subsets based on class relations",
+        "Taxonomic hierarchy can be tree-like or DAG structure",
+        "DAG can be converted to tree-like structure by distinguishing single-path nodes"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 7,
+      "slide_title": "Formal Problem Definition",
+      "section_name": "3 Problem Definition",
+      "role": "problem_definition",
+      "slide_purpose": "Present the mathematical formulation of the HTC problem",
+      "content_points": [
+        "Taxonomic hierarchy formulated as directed graph G = (V, E, E)",
+        "V = set of label nodes, E = top-down and bottom-up hierarchy paths",
+        "HTC defined as H = (X, L) with text objects X and label sets L",
+        "Each sample corresponds to multiple classes in hierarchy paths",
+        "Sample belongs to parent node if condition pertains to child node"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 8,
+      "slide_title": "HiAGM: Hierarchy-Aware Global Model Overview",
+      "section_name": "4 Hierarchy-Aware Global Model",
+      "role": "method_overview",
+      "slide_purpose": "Introduce the overall architecture of the proposed HiAGM model",
+      "content_points": [
+        "HiAGM leverages fine-grained hierarchy information for text classification",
+        "Consists of text encoder for textual information and hierarchy-aware structure encoder",
+        "Two variants: HiAGM-LA (multi-label attention) and HiAGM-TP (text feature propagation)"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 9,
+      "slide_title": "HiAGM Variants: LA and TP Approaches",
+      "section_name": "4 Hierarchy-Aware Global Model",
+      "role": "method_component",
+      "slide_purpose": "Detail the two different approaches for hybrid information aggregation",
+      "content_points": [
+        "HiAGM-LA: updates label representations with structure encoder",
+        "HiAGM-LA: generates label-aware text features via multi-label attention",
+        "HiAGM-TP: propagates text representations through hierarchy",
+        "HiAGM-TP: obtains label-wise features with fused label correlations"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 10,
+      "slide_title": "Hierarchical Label Structure in HTC",
+      "section_name": "4.1 Prior Hierarchy Information",
+      "role": "hook_context",
+      "slide_purpose": "Introduce the concept of taxonomic hierarchy and its importance in hierarchical text classification",
+      "content_points": [
+        "Taxonomic hierarchy describes hierarchical relations among labels",
+        "Major bottleneck: how to effectively utilize this established structure",
+        "Previous methods use static hierarchy paths in pipeline frameworks",
+        "HiAGM leverages prior knowledge of label correlations"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 11,
+      "slide_title": "Bayesian Approach to Hierarchy Encoding",
+      "section_name": "4.1 Prior Hierarchy Information",
+      "role": "method_component",
+      "slide_purpose": "Explain the Bayesian statistical approach for encoding hierarchical relationships",
+      "content_points": [
+        "Edge feature f(e_i,j) represented by prior probabilities P(U_j|U_i) and P(U_i|U_j)",
+        "Conditional probability P(U_j|U_i) = N_j/N_i where N_k is occurrence count",
+        "Reverse conditional P(U_i|U_j) always 1.0 due to hierarchy constraint",
+        "Prior probabilities rescaled and normalized for child nodes"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": [
+          {
+            "type": "equation",
+            "id": 1,
+            "img_path": "",
+            "text": "\n$$\n\\begin{array}{l} P \\left(U _ {j} \\mid U _ {i}\\right) = \\frac {P \\left(U _ {j} \\cap U _ {i}\\right)}{P \\left(U _ {i}\\right)} = \\frac {P \\left(U _ {j}\\right)}{P \\left(U _ {i}\\right)} = \\frac {N _ {j}}{N _ {i}}, \\tag {1} \\\\ P (U _ {i} | U _ {j}) = \\frac {P (U _ {i} \\cap U _ {j})}{P (U _ {j})} = \\frac {P (U _ {j})}{P (U _ {j})} = 1. 0, \\\\ \\end{array}\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the conditional probabilities between parent and child nodes in a hierarchical label structure, based on Bayesian inference. Specifically, it computes the probability of a child node $v_j$ given its parent $v_i$ as $P(U_j|U_i) = N_j / N_i$, where $N_k$ represents the frequency of label $v_k$ in the training data. This reflects the assumption that if a parent label occurs, its child labels are likely to occur with a probability proportional to their individual frequencies. The second part shows that the reverse conditional probability $P(U_i|U_j)$ is always 1.0, reflecting the hierarchical constraint: if a child node exists, its parent must also exist. These prior probabilities are used to encode structural dependencies in the hierarchy and serve as edge features in the proposed Hi-AGM model."
+          }
+        ]
+      }
+    },
+    {
+      "slide_id": 12,
+      "slide_title": "HiAGM Architecture Overview",
+      "section_name": "4.1 Prior Hierarchy Information",
+      "role": "overview_figure",
+      "slide_purpose": "Show the overall architecture of the hierarchy-aware global model",
+      "content_points": [
+        "Integrates text encoding with hierarchical label structure modeling",
+        "Two variants: HiAGM-LA (Multi-Label Attention) and HiAGM-TP (Message Propagation)",
+        "HiAGM-LA uses soft attention for label-aware text feature fusion",
+        "HiAGM-TP directly propagates text features through hierarchy"
+      ],
+      "visual_refs": {
+        "images": [
+          {
+            "type": "image",
+            "id": 3,
+            "img_path": "images/22af444efe3ab0f360b9d7b047c200deb50815575ff60236e45245a1e32da875.jpg",
+            "caption": "Figure 3: The overall structure of our hierarchy-aware global model. HiAGM consists of a text encoder and a hierarchy-aware encoder. The dataflows of structure encoders are illustrated in the grey dashed box. Two variants, as HiAGM-LA and HiAGM-TP, are presented in black dashed boxes, respectively.",
+            "analysis_text": "Figure 3 illustrates the architecture of the hierarchy-aware global model (HiAGM), which integrates text encoding with hierarchical label structure modeling. The model begins with word embeddings processed through a Bi-LSTM and CNN layers, followed by top-k max pooling to extract key text features. These features are then fed into two variants: HiAGM-LA (Multi-Label Attention) and HiAGM-TP (Message Propagation). In HiAGM-LA, soft attention mechanisms combine label representations with text features using a structure encoder that models hierarchical relationships via a directed graph, enabling label-aware text feature fusion. In HiAGM-TP, message propagation occurs directly within the hierarchy encoder, leveraging structure encoders such as Bi-TreeLSTM and Hierarchy-GCN to propagate text features across the label hierarchy. Both variants use a shared structure encoder to capture label dependencies based on prior probabilities derived from the taxonomic hierarchy, enhancing performance in hierarchical text classification."
+          }
+        ],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 13,
+      "slide_title": "Hierarchy-Aware Structure Encoder Overview",
+      "section_name": "4.2 Hierarchy-Aware Structure Encoder",
+      "role": "method_overview",
+      "slide_purpose": "Introduce the concept and components of the hierarchy-aware structure encoder",
+      "content_points": [
+        "Tree-LSTM and GCN as base structure encoders",
+        "Bidirectional Tree-LSTM for label correlation induction",
+        "Hierarchy-GCN for directed hierarchy graph processing",
+        "Fine-grained hierarchy information modeling"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 14,
+      "slide_title": "Bidirectional Tree-LSTM Architecture",
+      "section_name": "4.2 Hierarchy-Aware Structure Encoder",
+      "role": "method_component",
+      "slide_purpose": "Detail the bidirectional Tree-LSTM implementation",
+      "content_points": [
+        "Childsum module for bottom-up aggregation",
+        "Top-down module for parent-to-child propagation",
+        "Concatenation of bidirectional hidden states",
+        "Mini-batch training enabled by fixed hierarchy"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": [
+          {
+            "type": "equation",
+            "id": 2,
+            "img_path": "",
+            "text": "\n$$\n\\boldsymbol {i} _ {k} = \\sigma (\\boldsymbol {W} _ {(i)} \\boldsymbol {v} _ {k} + \\boldsymbol {U} _ {(i)} \\widetilde {\\boldsymbol {h}} _ {k} + \\boldsymbol {b} _ {(i)}),\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the input gate mechanism in a Tree-LSTM node, which is part of the bidirectional Tree-LSTM structure used as a hierarchy-aware encoder in HiAGM. Specifically, it computes the input gate \\(\\boldsymbol{i}_k\\) for node \\(k\\) by applying a sigmoid activation to a linear combination of the node's feature vector \\(\\boldsymbol{v}_k\\), the transformed hidden state \\(\\widetilde{\\boldsymbol{h}}_k\\), and bias terms. The weights \\(\\boldsymbol{W}_{(i)}\\) and \\(\\boldsymbol{U}_{(i)}\\) control how much information from the input and previous hidden states contributes to the gate. This gate helps regulate the flow of information during the hierarchical aggregation process, enabling the model to selectively update memory states based on both textual features and hierarchical label relationships."
+          },
+          {
+            "type": "equation",
+            "id": 6,
+            "img_path": "",
+            "text": "\n$$\n\\boldsymbol {c} _ {k} = \\boldsymbol {i} _ {k} \\odot \\boldsymbol {u} _ {k} + \\sum_ {j} \\boldsymbol {f} _ {k, j} \\odot \\boldsymbol {c} _ {j},\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the memory cell update mechanism in the hierarchy-aware structure encoder, specifically within the context of a Tree-LSTM or GCN-based model. The term \\(\\boldsymbol{c}_k\\) represents the memory state of node \\(k\\), updated by combining the input gate \\(\\boldsymbol{i}_k\\) modulated by the input feature \\(\\boldsymbol{u}_k\\), and a weighted sum of memory states from neighboring nodes \\(\\boldsymbol{c}_j\\), where the weights are determined by edge-specific flow factors \\(\\boldsymbol{f}_{k,j}\\). This formulation enables the model to aggregate hierarchical label information both bottom-up (from child nodes) and top-down (from parent nodes), capturing structural dependencies in the directed label hierarchy. The use of edge-wise flow factors ensures that information propagation respects the hierarchical relationships, such as the probability-based weighting in top-down paths, thereby enabling fine-grained modeling of label correlations."
+          },
+          {
+            "type": "equation",
+            "id": 7,
+            "img_path": "",
+            "text": "\n$$\n\\boldsymbol {h} _ {k} = \\boldsymbol {o} _ {k} \\odot \\tanh  (\\boldsymbol {c} _ {k}),\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the hidden state update mechanism in the hierarchy-aware structure encoder, specifically within the context of a Tree-LSTM or GCN-based model. Here, \\(\\boldsymbol{h}_k\\) represents the final hidden state of node \\(k\\) in the hierarchical label graph, computed as the element-wise product (Hadamard product) of the output \\(\\boldsymbol{o}_k\\) and the hyperbolic tangent of the memory cell state \\(\\boldsymbol{c}_k\\). This formulation enables the model to gate information flow through the hierarchy, allowing selective integration of label dependencies based on both structural and semantic relationships. The use of \\(\\tanh(\\boldsymbol{c}_k)\\) ensures bounded activation, while the gating via \\(\\boldsymbol{o}_k\\) allows the model to control how much of the memory content is exposed to the next layer, thus capturing fine-grained hierarchical interactions between labels."
+          },
+          {
+            "type": "equation",
+            "id": 10,
+            "img_path": "",
+            "text": "\n$$\n\\boldsymbol {h} _ {k} ^ {b i} = \\boldsymbol {h} _ {k} ^ {\\uparrow} \\oplus \\boldsymbol {h} _ {k} ^ {\\downarrow},\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the bidirectional hidden state representation $\\boldsymbol{h}_k^{bi}$ for a node $k$ in the hierarchical graph by concatenating its bottom-up ($\\boldsymbol{h}_k^{\\uparrow}$) and top-down ($\\boldsymbol{h}_k^{\\downarrow}$) hidden states. The bottom-up component captures information propagated from child nodes, while the top-down component integrates guidance from parent nodes, enabling the model to leverage both inductive (child-to-parent) and deductive (parent-to-child) reasoning within the hierarchy. This fusion allows HiAGM to effectively model fine-grained label dependencies through a bidirectional Tree-LSTM structure, enhancing the representation of each label node with rich structural context from the entire taxonomy."
+          }
+        ]
+      }
+    },
+    {
+      "slide_id": 15,
+      "slide_title": "Hierarchy-GCN Mechanism",
+      "section_name": "4.2 Hierarchy-Aware Structure Encoder",
+      "role": "method_component",
+      "slide_purpose": "Explain the Hierarchy-GCN's edge-weighted aggregation",
+      "content_points": [
+        "Top-down, bottom-up and self-loop edges",
+        "Weighted adjacency matrix for hierarchy probabilities",
+        "Direction-specific transformations",
+        "ReLU activation for final node representations"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": [
+          {
+            "type": "equation",
+            "id": 8,
+            "img_path": "",
+            "text": "\n$$\n\\widetilde {\\boldsymbol {h}} _ {k} ^ {\\uparrow} = \\sum_ {j \\in c h i l d (k)} f _ {p} (e _ {k, j}) \\boldsymbol {h} _ {j} ^ {\\uparrow},\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation describes the bottom-up information aggregation process in the hierarchy-aware structure encoder of HiAGM. Specifically, it computes the upward hidden state \\(\\widetilde{\\boldsymbol{h}}_k^\\uparrow\\) for node \\(k\\) by summing over contributions from its child nodes \\(j \\in \\text{child}(k)\\), where each contribution is weighted by a propagation function \\(f_p(e_{k,j})\\). The function \\(f_p(e_{k,j}) = 1.0\\) indicates that all child nodes contribute equally to their parent's representation during the bottom-up pass, preserving hierarchical structure without biasing based on label frequency or other metrics. This mechanism enables the model to propagate fine-grained label dependencies upward through the hierarchy, forming a structured representation of label relationships essential for effective multi-label classification."
+          },
+          {
+            "type": "equation",
+            "id": 9,
+            "img_path": "",
+            "text": "\n$$\n\\widetilde {\\boldsymbol {h}} _ {k} ^ {\\downarrow} = f _ {c} \\left(e _ {k, p}\\right) \\boldsymbol {h} _ {p} ^ {\\downarrow}, \\tag {3}\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation describes the top-down information flow in the hierarchy-aware structure encoder, specifically within the Hierarchy-GCN or Tree-LSTM framework. It computes the propagated hidden state $\\widetilde{\\boldsymbol{h}}_k^\\downarrow$ of node $k$ by applying a transformation function $f_c(e_{k,p})$—which represents the hierarchical prior probability from parent $p$ to child $k$—to the parent's hidden state $\\boldsymbol{h}_p^\\downarrow$. The weight $f_c(e_{k,p}) = \\frac{N_k}{N_p}$ reflects the relative size of the subtree rooted at $k$ compared to that at $p$, enabling structured attention during label propagation. This mechanism allows the model to incorporate global hierarchical context into label representations, facilitating better modeling of label dependencies in the directed taxonomic graph."
+          },
+          {
+            "type": "equation",
+            "id": 11,
+            "img_path": "",
+            "text": "\n$$\n\\begin{array}{l} \\boldsymbol {u} _ {k, j} = a _ {k, j} \\boldsymbol {v} _ {j} + \\boldsymbol {b} _ {l} ^ {k}, \\\\ \\boldsymbol {g} _ {k, j} = \\sigma \\left(\\boldsymbol {W} _ {g} ^ {d (j, k)} \\boldsymbol {v} _ {k} + \\boldsymbol {b} _ {g} ^ {k}\\right), \\tag {4} \\\\ \\boldsymbol {h} _ {k} = \\operatorname {R e L U} \\left(\\sum_ {j \\in N (k)} \\boldsymbol {g} _ {k, j} \\odot \\boldsymbol {u} _ {k, j}\\right), \\\\ \\end{array}\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation describes the node update mechanism in the Hierarchy-GCN component of the Hi-AGM model, which is designed to encode hierarchical label relationships. Specifically, it computes the hidden state \\(\\boldsymbol{h}_k\\) for a node \\(k\\) by aggregating information from its neighbors \\(N(k)\\) in the directed hierarchy graph. The term \\(\\boldsymbol{u}_{k,j} = a_{k,j} \\boldsymbol{v}_j + \\boldsymbol{b}_l^k\\) represents a transformed feature vector from neighbor \\(j\\), scaled by the hierarchical edge weight \\(a_{k,j}\\) (which reflects prior probability based on node size ratios or fixed values) and adjusted by a learnable bias. The gating signal \\(\\boldsymbol{g}_{k,j}\\) modulates this input using a sigmoid activation applied to a direction-specific weight matrix \\(\\boldsymbol{W}_g^{d(j,k)}\\) and bias, allowing dynamic control over information flow depending on edge direction (top-down, bottom-up, self-loop). Finally, the hidden state \\(\\boldsymbol{h}_k\\) is computed as the ReLU activation of the sum over gated and transformed inputs, enabling the model to capture fine-grained hierarchical dependencies through structured message passing."
+          }
+        ]
+      }
+    },
+    {
+      "slide_id": 16,
+      "slide_title": "Hierarchy Encoding Equations",
+      "section_name": "4.2 Hierarchy-Aware Structure Encoder",
+      "role": "theoretical",
+      "slide_purpose": "Present key equations governing hierarchy propagation",
+      "content_points": [
+        "Input/output gate mechanisms",
+        "Memory cell updates with edge-wise flow factors",
+        "Hierarchical probability weight calculations",
+        "Bidirectional state fusion"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": [
+          {
+            "type": "equation",
+            "id": 3,
+            "img_path": "",
+            "text": "\n$$\n\\boldsymbol {f} _ {k, j} = \\sigma (\\boldsymbol {W} _ {(f)} \\boldsymbol {v} _ {k} + \\boldsymbol {U} _ {(f)} \\boldsymbol {h} _ {j} + \\boldsymbol {b} _ {(f)}),\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the computation of a feature interaction term $\\boldsymbol{f}_{k,j}$, which models the relationship between a node $k$ in the hierarchy graph and a label or context representation $j$. Specifically, it computes a sigmoid-activated linear combination of the node embedding $\\boldsymbol{v}_k$ and the hidden state $\\boldsymbol{h}_j$, modulated by learnable weight matrices $\\boldsymbol{W}_{(f)}$ and $\\boldsymbol{U}_{(f)}$, along with a bias term $\\boldsymbol{b}_{(f)}$. This formulation is used within the hierarchy-aware structure encoder to capture fine-grained dependencies between nodes in the hierarchical label space, enabling the model to encode both local structural information and global hierarchical relationships. The resulting $\\boldsymbol{f}_{k,j}$ serves as an edge-wise feature that contributes to the aggregation of information across the directed hierarchy graph, supporting the induction of label correlations in the HiAGM framework."
+          },
+          {
+            "type": "equation",
+            "id": 4,
+            "img_path": "",
+            "text": "\n$$\n\\boldsymbol {o} _ {k} = \\sigma (\\boldsymbol {W} _ {(o)} \\boldsymbol {v} _ {k} + \\boldsymbol {U} _ {(o)} \\widetilde {\\boldsymbol {h}} _ {k} + \\boldsymbol {b} _ {(o)}),\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the output activation \\( \\boldsymbol{o}_k \\) for node \\( k \\) in the hierarchy-aware structure encoder, which is a key component of the Hi-AGM model. It computes a sigmoid-activated linear combination of two inputs: the transformed node representation \\( \\boldsymbol{v}_k \\) and the aggregated hidden state \\( \\widetilde{\\boldsymbol{h}}_k \\) from neighboring nodes in the hierarchical graph. The weights \\( \\boldsymbol{W}_{(o)} \\) and \\( \\boldsymbol{U}_{(o)} \\) modulate the contributions of these features, while \\( \\boldsymbol{b}_{(o)} \\) provides a bias term. This formulation enables the model to integrate both local label structure information and contextual text representations within the hierarchical framework, facilitating effective modeling of label dependencies through the directed hierarchy graph."
+          },
+          {
+            "type": "equation",
+            "id": 5,
+            "img_path": "",
+            "text": "\n$$\n\\boldsymbol {u} _ {k} = \\tanh  \\left(\\boldsymbol {W} ^ {(u)} \\boldsymbol {v} _ {k} + \\boldsymbol {U} ^ {(u)} \\widetilde {\\boldsymbol {h}} _ {k} + \\boldsymbol {b} ^ {(u)}\\right), \\tag {2}\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the computation of an intermediate activation vector $\\boldsymbol{u}_k$ in the hierarchy-aware structure encoder, specifically within the context of a Tree-LSTM or GCN-based model. It combines the input feature vector $\\boldsymbol{v}_k$ (representing the text or label features) with the hidden state $\\widetilde{\\boldsymbol{h}}_k$ from the previous layer through linear transformations parameterized by weight matrices $\\boldsymbol{W}^{(u)}$ and $\\boldsymbol{U}^{(u)}$, along with a bias term $\\boldsymbol{b}^{(u)}$. The hyperbolic tangent activation function introduces non-linearity, enabling the model to capture complex dependencies between the text features and hierarchical label structure. This step is crucial for integrating label-specific information into the node representation during the propagation of hierarchical signals in the directed graph."
+          }
+        ]
+      }
+    },
+    {
+      "slide_id": 17,
+      "slide_title": "HiAGM Model Overview",
+      "section_name": "4.3 Hybrid Information Aggregation",
+      "role": "method_overview",
+      "slide_purpose": "Introduce the end-to-end hierarchy-aware global model and its two variants",
+      "content_points": [
+        "HiAGM combines traditional text classification with hierarchy encoder for label-wise text features",
+        "Two variants: HiAGM-LA (parallel model for inductive fusion) and HiAGM-TP (serial model for deductive fusion)",
+        "Model processes token embeddings through bidirectional GRU and CNNs for text representation",
+        "Top-k max-pooling extracts key information from n-gram features",
+        "Continuous text representation S obtained with dimension dc"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 18,
+      "slide_title": "HiAGM-LA: Multi-Label Attention Variant",
+      "section_name": "4.3 Hybrid Information Aggregation",
+      "role": "method_component",
+      "slide_purpose": "Detail the inductive fusion approach using multi-label attention",
+      "content_points": [
+        "Simplifies multi-label attention LCL models to a global model",
+        "Enhances label representations with bidirectional hierarchical information",
+        "Overcomes convergence problem for label embedding across levels",
+        "Uses trainable label embedding Lk and structure encoders",
+        "Calculates label-wise attention value αki for inductive fusion"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": [
+          {
+            "type": "equation",
+            "id": 12,
+            "img_path": "",
+            "text": "\n$$\n\\alpha_ {k j} = \\frac {e ^ {\\boldsymbol {s} _ {j}} \\boldsymbol {h} _ {k} ^ {T}}{\\sum_ {j = 1} ^ {n} e ^ {\\boldsymbol {s} _ {j}} \\boldsymbol {h} _ {k} ^ {T}}, \\boldsymbol {v} _ {k} = \\sum_ {i = 1} ^ {n} \\alpha_ {k i} \\boldsymbol {s} _ {i}, \\tag {5}\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the multi-label attention mechanism used in the HiAGM-LA variant of the proposed model. The first part computes the attention weight α_kj, which measures the relevance of the i-th text feature vector s_i to the k-th label, based on the dot product between the label's hierarchy-aware embedding h_k and the text feature s_i, normalized by a softmax function across all features. This allows the model to focus on the most informative text features for each label. The second part aggregates these weighted text features into a label-aligned representation v_k, forming a compact, label-specific text embedding that captures both textual content and hierarchical label structure. These label-wise representations are then used for classification, enabling inductive fusion of text and label information within a global hierarchical framework."
+          }
+        ]
+      }
+    },
+    {
+      "slide_id": 19,
+      "slide_title": "HiAGM-TP: Text Feature Propagation",
+      "section_name": "4.3 Hybrid Information Aggregation",
+      "role": "method_component",
+      "slide_purpose": "Explain the deductive variant using hierarchical text feature propagation",
+      "content_points": [
+        "Conducts propagation of text features through hierarchy encoder",
+        "Transforms text features S to node inputs V via linear transformation",
+        "Updates textual information through same holistic taxonomic hierarchy",
+        "Output hidden state h represents deductive hierarchy-aware text features",
+        "Higher computational complexity but easier convergence compared to HiAGM-LA"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": [
+          {
+            "type": "equation",
+            "id": 13,
+            "img_path": "",
+            "text": "\n$$\n\\boldsymbol {V} = \\boldsymbol {M} \\boldsymbol {S}, \\tag {6}\n$$\n",
+            "text_format": "latex",
+            "analysis_text": "This equation defines the transformation of text features into node inputs for the hierarchy-aware structure encoder in the HiAGM-TP variant. Specifically, the matrix \\(\\boldsymbol{M}\\) maps the continuous text representation \\(\\boldsymbol{S}\\) — derived from CNN-based n-gram features and max-pooling — into a new feature space \\(\\boldsymbol{V}\\) that aligns with the label nodes in the hierarchical graph. This linear transformation enables the propagation of textual information through the hierarchical structure, allowing the model to learn label-specific text representations by leveraging the taxonomic relationships encoded in the graph. The resulting \\(\\boldsymbol{V}\\) serves as the initial node embeddings for the structure encoder, facilitating deductive fusion where text features are updated across the hierarchy without explicit label embedding fusion."
+          }
+        ]
+      }
+    },
+    {
+      "slide_id": 20,
+      "slide_title": "Hierarchy Flattening for Multi-Label Classification",
+      "section_name": "4.4 Classification",
+      "role": "method_component",
+      "slide_purpose": "Explain the process of flattening the hierarchy for classification and the final prediction layer",
+      "content_points": [
+        "Flatten hierarchy by treating all nodes as leaf nodes for multi-label classification",
+        "Final hierarchy-aware features fed into a fully connected layer for prediction",
+        "Complementary with recursive regularization for parameter optimization"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 21,
+      "slide_title": "Loss Functions in HiAGM",
+      "section_name": "4.4 Classification",
+      "role": "theoretical",
+      "slide_purpose": "Detail the loss functions used for training the HiAGM model",
+      "content_points": [
+        "Recursive regularization loss ensures parameter consistency between parent and child nodes",
+        "Binary cross-entropy loss function for multi-label classification",
+        "Final loss combines classification loss and recursive regularization with weighting factor"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 22,
+      "slide_title": "Experimental Setup",
+      "section_name": "5 Experiment",
+      "role": "experiment_setup",
+      "slide_purpose": "Introduce the datasets, evaluation metrics, and implementation details",
+      "content_points": [
+        "Description of benchmark datasets used",
+        "Evaluation metrics for performance comparison",
+        "Implementation details of Hi-AGM variants"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 23,
+      "slide_title": "Comparison with Baseline Methods",
+      "section_name": "5 Experiment",
+      "role": "results",
+      "slide_purpose": "Present the main experimental results and comparisons with existing methods",
+      "content_points": [
+        "Performance comparison of HiAGM-LA and HiAGM-TP",
+        "Comparison with state-of-the-art methods",
+        "Significant improvements on benchmark datasets"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 24,
+      "slide_title": "Ablation Study and Analysis",
+      "section_name": "5 Experiment",
+      "role": "analysis_ablation",
+      "slide_purpose": "Discuss the ablation study and deeper analysis of experimental results",
+      "content_points": [
+        "Impact of hierarchy-aware structure encoders",
+        "Effectiveness of label-aware text features",
+        "Analysis of text feature propagation"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 25,
+      "slide_title": "Datasets Overview",
+      "section_name": "5.1 Experiment Setup",
+      "role": "experiment_setup",
+      "slide_purpose": "Introduce the benchmark datasets used for evaluation",
+      "content_points": [
+        "RCV1-V2 and NYT are news categorization corpora",
+        "WOS includes abstracts from Web of Science",
+        "All datasets annotated with hierarchical taxonomic labels",
+        "Different splitting strategies for each dataset",
+        "Special handling of samples with no label or single-level label"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [
+          {
+            "type": "table",
+            "id": 1,
+            "img_path": "images/f8605fbebbd58d991688fe3bc23429b735cc0571881e2e0ff0663e397c0b3aa7.jpg",
+            "caption": "",
+            "body": "<table><tr><td>Dataset</td><td>|L|</td><td>Depth</td><td>Avg(|Li|)</td><td>Train</td><td>Val</td><td>Test</td></tr><tr><td>RCV1</td><td>103</td><td>4</td><td>3.24</td><td>20,833</td><td>2,316</td><td>781,265</td></tr><tr><td>WOS</td><td>141</td><td>2</td><td>2.0</td><td>30,070</td><td>7,518</td><td>9,397</td></tr><tr><td>NYT</td><td>166</td><td>8</td><td>7.6</td><td>23,345</td><td>5,834</td><td>7,292</td></tr></table>",
+            "analysis_text": "This table presents the data statistics for three benchmark datasets used in hierarchical text classification: RCV1, WOS, and NYT. It includes key characteristics such as the total number of classes (|L|), the maximum depth of the hierarchical label structure, the average number of labels per sample (Avg(|Li|)), and the sizes of training, validation, and test splits. The RCV1 dataset has 103 classes with a hierarchy depth of 4, while WOS has 141 classes but only a depth of 2, indicating a shallower hierarchy. NYT features the deepest hierarchy at 8 levels with 166 classes. Notably, RCV1 has the largest test set (over 780k samples), whereas NYT and WOS have much smaller test sets. These variations highlight the diversity in scale and complexity across the datasets, which is critical for evaluating the robustness of the proposed Hi-AGM model under different hierarchical structures and data distributions."
+          }
+        ],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 26,
+      "slide_title": "Evaluation Metrics",
+      "section_name": "5.1 Experiment Setup",
+      "role": "experiment_setup",
+      "slide_purpose": "Explain the performance measurement approach",
+      "content_points": [
+        "Standard metrics: Micro-F1 and Macro-F1",
+        "Micro-F1 considers overall precision/recall",
+        "Macro-F1 averages F1-scores across labels",
+        "Micro-F1 weights frequent labels more",
+        "Macro-F1 treats all labels equally"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 27,
+      "slide_title": "Implementation Details",
+      "section_name": "5.1 Experiment Setup",
+      "role": "experiment_setup",
+      "slide_purpose": "Describe model architecture and training configuration",
+      "content_points": [
+        "Bi-GRU with 64 hidden units + 3 parallel CNN layers",
+        "300D GloVe embeddings with OOV handling",
+        "Maximum input length of 256 tokens",
+        "Adam optimizer with specific hyperparameters",
+        "Different dropout rates per layer"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 28,
+      "slide_title": "Performance Comparison on RCV1-V2",
+      "section_name": "5.2 Comparison",
+      "role": "results",
+      "slide_purpose": "Show quantitative performance improvements of HiAGM variants against baselines",
+      "content_points": [
+        "HiAGM-LA achieves 61.90% Macro-F1 and 82.54% Micro-F1",
+        "HiAGM-TP obtains best performance: 63.35% Macro-F1 and 83.96% Micro-F1",
+        "Both variants outperform state-of-the-art HTC studies",
+        "Demonstrates advancement of hierarchy encoders"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [
+          {
+            "type": "table",
+            "id": 3,
+            "img_path": "images/683ff82a17c457dea63736548277bc11d14addb5f75491d3c9ef947ac50f0176.jpg",
+            "caption": "Table 2: Comparison to previous models on RCV1-V2. Note that the prior probability matrix in HiAGM-TP is fine-tuned during training while the one in HiAGMLA is fixed.  $w / o$  Rec denotes training without recursive regularization. \"†\" and \"‡\" indicate statistically significant difference (p<0.01) from TextRCNN and TextR-CNN+LabelAttention respectively.",
+            "body": "<table><tr><td rowspan=\"2\">Model</td><td colspan=\"3\">HiAGM-LA</td><td colspan=\"3\">HiAGM-TP</td></tr><tr><td>Micro</td><td>Macro</td><td>Time</td><td>Micro</td><td>Macro</td><td>Time</td></tr><tr><td>TreeLSTM</td><td>82.54</td><td>61.90</td><td>1.0 ×</td><td>83.24</td><td>62.60</td><td>3.2 ×</td></tr><tr><td>GCN</td><td>82.21</td><td>61.65</td><td>0.9 ×</td><td>83.92</td><td>63.01</td><td>1.1 ×</td></tr></table>",
+            "analysis_text": "Table 2 compares the performance of HiAGM-LA and HiAGM-TP against baseline models TreeLSTM and GCN on the RCV1-V2 dataset, evaluating both hierarchical text classification accuracy and inference efficiency. The metrics include Micro-F1, Macro-F1, and relative inference time per epoch (normalized to TreeLSTM). HiAGM-TP outperforms all baselines in both Micro and Macro-F1 scores, achieving 83.92% and 63.01% respectively, demonstrating superior modeling of label hierarchies. While HiAGM-LA slightly underperforms HiAGM-TP in F1 scores, it maintains competitive results. Notably, HiAGM-TP has a higher computational cost (3.2× slower than TreeLSTM), whereas HiAGM-LA is faster (0.9×), indicating a trade-off between performance and efficiency. This table supports the claim that HiAGM variants significantly improve HTC performance, especially in handling sparse classes through enhanced label-space modeling."
+          }
+        ],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 29,
+      "slide_title": "Ablation Study Without Recursive Regularization",
+      "section_name": "5.2 Comparison",
+      "role": "analysis_ablation",
+      "slide_purpose": "Demonstrate core architecture effectiveness independent of regularization",
+      "content_points": [
+        "HiAGM variants show competitive improvement without recursive regularization",
+        "1.75% (HiAGM-LA) and 3.13% (HiAGM-TP) Macro-F1 gains over HiLAP",
+        "Recursive regularization is complementary but not necessary",
+        "Proves intrinsic strength of hierarchy-aware architecture"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 30,
+      "slide_title": "Consistent Improvement Across Datasets",
+      "section_name": "5.2 Comparison",
+      "role": "results",
+      "slide_purpose": "Show generalization capability across multiple benchmarks",
+      "content_points": [
+        "HiAGM achieves consistent improvements on RCV1-V2, WOS and NYT",
+        "Strong performance on data-sparse classes deep in hierarchy",
+        "Particularly excels in Macro-F1 scores",
+        "Demonstrates global model's text feature enhancement capability"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 31,
+      "slide_title": "Performance Comparison of HiAGM Variants",
+      "section_name": "5.3 Analysis",
+      "role": "results",
+      "slide_purpose": "Show the superior performance of HiAGM variants over baselines",
+      "content_points": [
+        "Both HiAGM-LA and HiAGM-TP outperform baseline models and previous studies",
+        "HiAGM-TP shows better performance than HiAGM-LA with both encoders",
+        "HiAGM-LA is more computationally efficient during inference",
+        "HiAGM-TP recommended for high performance, HiAGM-LA for faster inference"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [
+          {
+            "type": "table",
+            "id": 4,
+            "img_path": "images/2321e86c399fdf263b100b87320a867726ec80325555e2dc741b6b68d5749cbe.jpg",
+            "caption": "",
+            "body": "<table><tr><td rowspan=\"2\">Model</td><td colspan=\"2\">RCV1-V2</td><td colspan=\"2\">RCV1-V2-R</td><td colspan=\"2\">WOS</td><td colspan=\"2\">NYT</td></tr><tr><td>Micro-F1</td><td>Macro-F1</td><td>Micro-F1</td><td>Macro-F1</td><td>Micro-F1</td><td>Macro-F1</td><td>Micro-F1</td><td>Macro-F1</td></tr><tr><td colspan=\"9\">Global Text Classification Baseline</td></tr><tr><td>TextRNN</td><td>81.10</td><td>51.09</td><td>87.78</td><td>70.42</td><td>77.94</td><td>69.65</td><td>70.29</td><td>53.06</td></tr><tr><td>TextCNN</td><td>79.37</td><td>55.45</td><td>84.97</td><td>68.06</td><td>82.00</td><td>76.18</td><td>70.11</td><td>56.84</td></tr><tr><td>TextRCNN</td><td>81.57</td><td>59.25</td><td>88.32</td><td>72.23</td><td>83.55</td><td>76.99</td><td>70.83</td><td>56.18</td></tr><tr><td colspan=\"9\">HiAGM-LA</td></tr><tr><td>GCN</td><td>82.21</td><td>61.65</td><td>88.49</td><td>73.14</td><td>84.61</td><td>79.37</td><td>72.35</td><td>58.67</td></tr><tr><td>TreeLSTM</td><td>82.54</td><td>61.90</td><td>88.47</td><td>72.81</td><td>84.82</td><td>79.51</td><td>72.50</td><td>58.86</td></tr><tr><td colspan=\"9\">HiAGM-TP</td></tr><tr><td>GCN</td><td>83.96</td><td>63.35</td><td>88.64</td><td>74.00</td><td>85.82</td><td>80.28</td><td>74.97</td><td>60.83</td></tr><tr><td>TreeLSTM</td><td>83.20</td><td>62.32</td><td>88.86</td><td>74.16</td><td>85.18</td><td>79.95</td><td>74.43</td><td>60.76</td></tr></table>",
+            "analysis_text": "This table presents the experimental results of the proposed HiAGM-LA and HiAGM-TP models compared to baseline text classification methods on four benchmark datasets: RCV1-V2, RCV1-V2-R, WOS, and NYT. Performance is evaluated using Micro-F1 and Macro-F1 scores across different model architectures, including TextRNN, TextCNN, TextRCNN, GCN, and TreeLSTM. The results show that both HiAGM variants significantly outperform the global text classification baselines, with HiAGM-TP achieving the highest performance overall. For instance, on RCV1-V2, HiAGM-TP with GCN reaches a Micro-F1 of 83.96 and Macro-F1 of 63.35, surpassing all other models. This demonstrates the effectiveness of incorporating hierarchical label structure through hierarchy-aware encoders, with HiAGM-TP showing superior performance due to its direct propagation of text features into the hierarchy encoder, while HiAGM-LA offers faster inference by leveraging pretrained label embeddings."
+          }
+        ],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 32,
+      "slide_title": "Impact of GCN Layers",
+      "section_name": "5.3 Analysis",
+      "role": "analysis_ablation",
+      "slide_purpose": "Analyze the effect of GCN depth on model performance",
+      "content_points": [
+        "One-layer GCN consistently performs best in both variants",
+        "Deeper networks may introduce noise from non-adjacent node correlations",
+        "Local hierarchical relationships sufficient for effective aggregation",
+        "Findings align with recursive regularization principles"
+      ],
+      "visual_refs": {
+        "images": [
+          {
+            "type": "image",
+            "id": 4,
+            "img_path": "images/e03e245987639d02de007669437d1efd90fdbee7bc4acea1175311c8bc0fa3bb.jpg",
+            "caption": "Figure 4: Ablation study on the depth of GCN.",
+            "analysis_text": "Figure 4 presents an ablation study on the depth of the Graph Convolutional Network (GCN) used in the hierarchy encoder of HiAGM. It compares the Micro-F1 performance across one, two, and three GCN layers for three variants: HiAGM-LA (red), HiAGM-TP-Fixed (yellow), and HiAGM-TP (blue). The results show that a single-layer GCN consistently achieves the highest performance across all variants, indicating that deeper networks do not improve performance and may introduce noise from non-adjacent node correlations. This suggests that local hierarchical relationships are sufficient for effective information aggregation in hierarchical text classification, aligning with the principles of recursive regularization and transfer learning between adjacent labels."
+          }
+        ],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 33,
+      "slide_title": "Prior Probability Analysis",
+      "section_name": "5.3 Analysis",
+      "role": "analysis_ablation",
+      "slide_purpose": "Evaluate different prior probability configurations",
+      "content_points": [
+        "Fixed weighted adjacent matrix outperforms unweighted and trainable ones",
+        "Best results obtained when following hierarchy direction",
+        "Trainable priors offer higher flexibility and better performance",
+        "Interactions between non-adjacent nodes negatively impact performance"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [
+          {
+            "type": "table",
+            "id": 5,
+            "img_path": "images/a08f758c12dd9cede6176325a5d7518fca0cb7570fe9afdee1493243115709a7.jpg",
+            "caption": "",
+            "body": "<table><tr><td rowspan=\"2\">Top-Down</td><td rowspan=\"2\">Bottom-Up</td><td colspan=\"2\">Fixed</td><td colspan=\"2\">Trainable</td></tr><tr><td>Micro</td><td>Macro</td><td>Micro</td><td>Macro</td></tr><tr><td colspan=\"2\">Edge-Wise Matrix</td><td>-</td><td>-</td><td>82.75</td><td>60.81</td></tr><tr><td colspan=\"2\">Randomly Initialized</td><td>-</td><td>-</td><td>83.86</td><td>62.12</td></tr><tr><td colspan=\"2\">Randomly Initialized*</td><td>-</td><td>-</td><td>82.80</td><td>62.51</td></tr><tr><td>1</td><td>1</td><td>83.77</td><td>62.31</td><td>83.86</td><td>62.96</td></tr><tr><td>P</td><td>P</td><td>83.61</td><td>63.65</td><td>83.83</td><td>63.14</td></tr><tr><td>1</td><td>P</td><td>83.65</td><td>62.46</td><td>83.95</td><td>63.23</td></tr><tr><td>P</td><td>1</td><td>83.92</td><td>63.01</td><td>83.96</td><td>63.35</td></tr><tr><td>P*</td><td>1*</td><td>-</td><td>-</td><td>83.33</td><td>62.86</td></tr></table>",
+            "analysis_text": "Table 5 presents an ablation study on the HiAGM-TP variant using a GCN-based hierarchy encoder, focusing on the impact of different prior probability settings and adjacency matrix configurations in the hierarchical graph. The table compares performance under fixed versus trainable weighted adjacent matrices, with various initialization strategies: edge-wise trainable weights, randomly initialized matrices, and two types of prior probability functions—P (based on node frequency ratios) and I (uniform weight). Results show that using trainable priors generally outperforms fixed ones, especially when combining P and I in specific propagation directions (e.g., P→1 or 1→P), achieving peak macro F1 scores of 63.65 and 63.35 respectively. Notably, the best performance occurs when information flows consistently with the hierarchy direction, suggesting that structured propagation aligned with label taxonomy enhances classification accuracy. The results also confirm that simple weighted matrices with prior probabilities outperform complex edge-wise models, indicating that hierarchical structure can be effectively captured without over-parameterizing edge transformations."
+          }
+        ],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 34,
+      "slide_title": "Level-based Performance Improvement",
+      "section_name": "5.3 Analysis",
+      "role": "results",
+      "slide_purpose": "Demonstrate performance gains across hierarchical levels",
+      "content_points": [
+        "Both HiAGM variants outperform baseline at all levels",
+        "Significant advantage observed at deeper levels (4-8)",
+        "HiAGM-TP shows stronger feature propagation in deep structures",
+        "Consistent superiority of hierarchy-aware models"
+      ],
+      "visual_refs": {
+        "images": [
+          {
+            "type": "image",
+            "id": 5,
+            "img_path": "images/0c4d22b04f422c4b182c9c12041a566ef5a61080431c99f3430f44d91d8afc43.jpg",
+            "caption": "Figure 5: Evaluation of labels among different levels. Note that we observe similar results for other datasets and omit them for a cleaner view.",
+            "analysis_text": "Figure 5 evaluates the performance of RCNN, HiAGM-LA, and HiAGM-TP across different hierarchical levels in terms of Micro-F1 score. The results show that both HiAGM variants outperform the baseline RCNN at all levels, with a particularly significant advantage at deeper levels (levels 4–8). This indicates that the proposed hierarchy-aware models effectively capture complex label dependencies in deep taxonomic structures, leading to improved classification accuracy for fine-grained categories. The consistent superiority of HiAGM-TP over HiAGM-LA suggests its stronger ability to propagate text features through the hierarchical graph, especially in lower-level classifications."
+          }
+        ],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 35,
+      "slide_title": "Key Contributions",
+      "section_name": "6 Conclusion",
+      "role": "takeaways",
+      "slide_purpose": "Summarize the main contributions and achievements of the research",
+      "content_points": [
+        "Proposed an end-to-end hierarchy-aware global model for hierarchical text classification",
+        "Introduced bidirectional TreeLSTM and hierarchy-GCN as structure encoders",
+        "Developed two variants: multi-label attention (HiAGM-LA) and text feature propagation (HiAGM-TP)",
+        "Achieved significant improvements on three benchmark datasets",
+        "Obtained state-of-the-art results on RCV1-V2 (Macro-F1: 63.35%, Micro-F1: 83.96%)"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 36,
+      "slide_title": "Acknowledgments",
+      "section_name": "Acknowledgments",
+      "role": "takeaways",
+      "slide_purpose": "Express gratitude and acknowledge support",
+      "content_points": [
+        "Thank anonymous reviewers for their valuable suggestions",
+        "Research supported by National Natural Science Foundation of China",
+        "Grant numbers: 61772337 and U1736207"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    }
+  ],
+  "statistics": {
+    "total_slides": 37,
+    "total_sections": 15,
+    "success_sections": 15,
+    "failed_sections": 0
+  }
+}

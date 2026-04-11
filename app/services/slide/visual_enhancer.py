@@ -173,19 +173,125 @@ class VisualEnhancer:
 
         return img_entry, rewritten
 
+    def run_strategy(self) -> dict:
+        """Pass 1 (offline): Classify all slides and write visual_enhance strategy fields.
+
+        No image generation, no LLM calls. Reads from compressed_slides and saves
+        06_enhanced_slides.json with each slide's ``visual_enhance`` field filled.
+        For image-strategy slides the field also carries ``generated: False`` as a
+        reminder that the actual image has not yet been produced.
+        """
+        data = json.loads(self.outline_path.read_text(encoding="utf-8"))
+        slides = data["slides"]
+        report = {}
+
+        for slide in slides:
+            sid = slide.get("slide_id", "?")
+            decision = classify(slide)
+            report[sid] = decision
+
+            logger.info(f"{TAG} [strategy] [{sid:02}] role={slide.get('role', '?'):<22} "
+                        f"strategy={decision['strategy']}")
+
+            if decision["strategy"] == "skip":
+                slide.setdefault("visual_enhance", {})["strategy"] = "skip"
+                continue
+
+            if decision["strategy"] == "image":
+                slide.setdefault("visual_enhance", {}).update({
+                    "strategy": "image",
+                    "image_type": decision["image_type"],
+                    "image_prompt": decision.get("image_prompt", ""),
+                    "generated": False,
+                })
+            elif decision["strategy"] == "css":
+                css = decision.get("css_strategy", _DEFAULT_CSS)
+                slide.setdefault("visual_enhance", {}).update({
+                    "strategy": "css",
+                    "css_strategy": css,
+                    "reason": decision.get("reason", ""),
+                })
+
+        self._save(data)
+        return {"slides": slides, "report": report}
+
+    def run_images(self, slide_ids: Optional[list[int]] = None, delay: float = 2.0) -> dict:
+        """Pass 2 (online): Generate AI images for slides with strategy=='image'.
+
+        Reads from the already-saved 06_enhanced_slides.json (produced by
+        run_strategy), generates an image for each un-generated image-strategy
+        slide, and overwrites the file with the update.
+        """
+        enhanced_path = get_output_path(OUTPUT_FILES["enhanced_slides"])
+        if not enhanced_path.exists():
+            raise FileNotFoundError("Run run_strategy() first to produce enhanced_slides.")
+
+        data = json.loads(enhanced_path.read_text(encoding="utf-8"))
+        slides = data["slides"]
+
+        candidates = [
+            s for s in slides
+            if (slide_ids is None or s.get("slide_id") in slide_ids)
+            and s.get("visual_enhance", {}).get("strategy") == "image"
+            and not s.get("visual_enhance", {}).get("generated", False)
+        ]
+
+        logger.info(f"{TAG} [images] {len(candidates)} slide(s) to generate")
+        report = {}
+
+        for slide in candidates:
+            sid = slide.get("slide_id", "?")
+            enhance = slide.get("visual_enhance", {})
+            decision = {
+                "strategy": "image",
+                "image_type": enhance.get("image_type", "concept_diagram"),
+                "image_prompt": enhance.get("image_prompt") or _build_image_prompt(
+                    slide, enhance.get("image_type", "concept_diagram")
+                ),
+            }
+            try:
+                img_entry, rewritten = self._enhance_image(slide, decision, delay)
+                slide.setdefault("visual_refs", {})["images"] = [img_entry]
+                slide["content_points"] = rewritten
+                slide["visual_enhance"]["generated"] = True
+                report[sid] = {"ok": True, "img_path": img_entry["img_path"]}
+                logger.info(f"{TAG} [images] [{sid:02}] generated: {img_entry['img_path']}")
+            except Exception as e:
+                report[sid] = {"ok": False, "error": str(e)}
+                logger.error(f"{TAG} [images] [{sid:02}] failed: {e}")
+
+        self._save_enhanced(data)
+        return {"generated": len([v for v in report.values() if v.get("ok")]), "report": report}
+
     def _save(self, data):
         output_path = get_output_path(OUTPUT_FILES["enhanced_slides"])
         output_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         logger.info(f"{TAG} saved to {output_path}")
+
+    def _save_enhanced(self, data):
+        """Save back to enhanced_slides (used after run_images)."""
+        self._save(data)
 
 
 # ── Public entry ─────────────────────────────────────────────────────────────
 
 def run(outline_path: str = None, slide_ids: list[int] = None,
         dry_run: bool = False) -> dict:
-    """Run visual enhancement pass."""
+    """Run full visual enhancement pass (strategy + image generation)."""
     enhancer = VisualEnhancer(outline_path=outline_path)
     return enhancer.run(slide_ids=slide_ids, dry_run=dry_run)
+
+
+def run_strategy(outline_path: str = None) -> dict:
+    """Classify slides and write strategy fields only (no image generation)."""
+    enhancer = VisualEnhancer(outline_path=outline_path)
+    return enhancer.run_strategy()
+
+
+def run_images(slide_ids: list[int] = None, delay: float = 2.0) -> dict:
+    """Generate AI images for slides that have strategy=='image' but not yet generated."""
+    enhancer = VisualEnhancer()
+    return enhancer.run_images(slide_ids=slide_ids, delay=delay)
 
 
 # ── Prompt builders ──────────────────────────────────────────────────────────

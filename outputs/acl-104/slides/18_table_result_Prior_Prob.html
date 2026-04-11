@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>Role of Prior Probabilities</title>
+    <style>
+        :root {
+            --dk1: #000000;
+            --lt1: #FFFFFF;
+            --dk2: #E8EEF2;
+            --lt2: #F9FAFB;
+            --accent1: #2B4663;
+            --accent2: #5C7885;
+            --accent3: #94ACBC;
+            --accent4: #B9CAE1;
+            --accent5: #97ABBD;
+            --accent6: #3B606F;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #6d6d6d;
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0,0,0,.6);
+            background-color: var(--lt2);
+        }
+
+        .shape { position: absolute; overflow: hidden; }
+        .img-fit { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+        .divider-line {
+            position: absolute;
+            left: 35px;
+            width: 890px;
+            height: 0;
+            border-top: 1px solid var(--accent3);
+            z-index: 2;
+        }
+
+        .slide-section {
+            position: absolute;
+            left: 0; top: 12px;
+            width: 25px; height: 55px;
+            z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--lt1);
+            font-size: 28px; font-weight: bold;
+            font-family: Impact, 'Arial Narrow', sans-serif;
+            pointer-events: none;
+        }
+
+        .slide-title {
+            position: absolute;
+            left: 60px; top: 15px; right: 200px; height: 45px;
+            display: flex; align-items: center;
+            z-index: 10;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent1);
+            font-weight: bold;
+        }
+
+        .slide-footer-info {
+            position: absolute;
+            right: 40px; bottom: 15px;
+            font-size: 12px; color: var(--accent5);
+            z-index: 10;
+        }
+
+        /* Bullets */
+        .bullets-area {
+            position: absolute;
+            left: 35px; right: 35px; top: 74px;
+            display: flex; gap: 10px;
+            z-index: 5;
+        }
+
+        .bullet-chip {
+            flex: 1;
+            background: var(--dk2);
+            border: 1px solid var(--accent4);
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 12px; line-height: 1.5;
+            color: var(--accent6);
+            display: flex; gap: 8px; align-items: flex-start;
+        }
+
+        .bullet-chip .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent1);
+            margin-top: 5px; flex-shrink: 0;
+        }
+
+        .bullet-chip b { color: var(--accent1); }
+
+        /* ── Table (slide-16 style) ── */
+        .table-wrapper {
+            position: absolute;
+            left: 35px; right: 35px;
+            top: 148px; bottom: 73px;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        table.result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11.5px;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            table-layout: fixed;
+        }
+
+        /* Header row 1 */
+        table.result-table thead tr:first-child th {
+            background-color: var(--accent1);
+            color: var(--lt1);
+            font-weight: bold;
+            font-size: 12px;
+            padding: 6px 4px;
+            border: 1px solid var(--accent2);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Header row 2 */
+        table.result-table thead tr:nth-child(2) th {
+            background-color: var(--accent2);
+            color: var(--lt1);
+            font-size: 11px;
+            font-weight: normal;
+            padding: 4px 3px;
+            border: 1px solid var(--accent3);
+            text-align: center;
+        }
+
+        /* Body cells */
+        table.result-table tbody td {
+            border: 1px solid var(--accent4);
+            padding: 6px 4px;
+            text-align: center;
+            vertical-align: middle;
+            color: var(--dk1);
+            background-color: var(--lt2);
+        }
+
+        /* Baseline model name cell (colspan=2) */
+        td.model-span {
+            text-align: left;
+            padding-left: 14px;
+            color: var(--accent2);
+            font-weight: 600;
+            background-color: var(--dk2) !important;
+            border-right: 1px solid var(--accent3) !important;
+        }
+
+        /* Dash placeholder */
+        td.dash { color: #ccc; }
+
+        /* Best row */
+        tr.best-row td { background-color: rgba(43,70,99,0.08) !important; }
+        td.best { font-weight: bold; color: var(--accent1); }
+
+        /* Legend */
+        .legend-bar {
+            position: absolute;
+            left: 35px; right: 35px;
+            bottom: 50px;
+            height: 20px;
+            display: flex; align-items: center; gap: 22px;
+            font-size: 10.5px; color: var(--accent5);
+            z-index: 5;
+        }
+
+        .legend-bar b { color: var(--accent6); }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+
+        <!-- Decoration -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
+            <path d="M 0.000,0.000 L 44.100,0.000 L 25.355,55.100 L 0.000,55.100 Z"
+                fill="#2B4663" stroke="none" fill-rule="nonzero"/>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="position:absolute;left:32.9px;top:29.9px;width:7.6px;height:17.5px;overflow:visible;">
+            <path d="M 5.940,0.000 L 7.600,0.000 L 1.660,17.500 L 0.000,17.500 Z"
+                fill="#B9CAE1" stroke="#B9CAE1" stroke-width="3" fill-rule="nonzero"/>
+        </svg>
+        <div class="divider-line" style="top:64.7px;"></div>
+        <div class="divider-line" style="top:493.2px;"></div>
+        <div class="shape" style="left:956.4px;top:26.5px;width:3.6px;height:20.9px;background-color:var(--accent4);"></div>
+        <div class="shape" style="left:770.9px;top:19.8px;width:155.1px;height:34.1px;">
+            <img src="logo.png" alt="BIT Logo" class="img-fit">
+        </div>
+        <div class="shape" style="left:45px;top:502px;width:200px;height:25px;">
+            <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
+        </div>
+
+        <!-- Header -->
+        <div class="slide-section">12</div>
+        <div class="slide-title"><h1>Role of Prior Probabilities</h1></div>
+
+        <!-- Bullets -->
+        <div class="bullets-area">
+            <div class="bullet-chip">
+                <div class="dot"></div>
+                <div><b>Fixed</b> weighted matrix (P) outperforms unweighted (1) and trainable baselines</div>
+            </div>
+            <div class="bullet-chip">
+                <div class="dot"></div>
+                <div>Prior probability <b>N<sub>j</sub>/N<sub>i</sub></b> effectively represents hierarchical label dependencies</div>
+            </div>
+            <div class="bullet-chip">
+                <div class="dot"></div>
+                <div><b>Full-graph interaction</b> (*) performs worse than structured path propagation</div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <table class="result-table">
+                <!-- 6列: 140+140+152+152+152+154 = 890px -->
+                <col style="width:140px">
+                <col style="width:140px">
+                <col style="width:152px">
+                <col style="width:152px">
+                <col style="width:152px">
+                <col style="width:154px">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Top-Down</th>
+                        <th rowspan="2">Bottom-Up</th>
+                        <th colspan="2">Fixed</th>
+                        <th colspan="2">Trainable</th>
+                    </tr>
+                    <tr>
+                        <th>Micro-F1</th>
+                        <th>Macro-F1</th>
+                        <th>Micro-F1</th>
+                        <th>Macro-F1</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="model-span" colspan="2">Edge-Wise Matrix</td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td>82.75</td>
+                        <td>60.81</td>
+                    </tr>
+                    <tr>
+                        <td class="model-span" colspan="2">Randomly Initialized</td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td>83.86</td>
+                        <td>62.12</td>
+                    </tr>
+                    <tr>
+                        <td class="model-span" colspan="2">Randomly Initialized *</td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td>82.80</td>
+                        <td>62.51</td>
+                    </tr>
+                    <tr>
+                        <td>1</td><td>1</td>
+                        <td>83.77</td><td>62.31</td>
+                        <td>83.86</td><td>62.96</td>
+                    </tr>
+                    <tr>
+                        <td>P</td><td>P</td>
+                        <td>83.61</td><td>63.65</td>
+                        <td>83.83</td><td>63.14</td>
+                    </tr>
+                    <tr>
+                        <td>1</td><td>P</td>
+                        <td>83.65</td><td>62.46</td>
+                        <td>83.95</td><td>63.23</td>
+                    </tr>
+                    <tr class="best-row">
+                        <td class="best">P</td>
+                        <td class="best">1</td>
+                        <td class="best">83.92</td>
+                        <td class="best">63.01</td>
+                        <td class="best">83.96</td>
+                        <td class="best">63.35</td>
+                    </tr>
+                    <tr>
+                        <td>P *</td><td>1 *</td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td>83.33</td>
+                        <td>62.86</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-bar">
+            <b>P</b>: prior prob. (N<sub>j</sub>/N<sub>i</sub>) &nbsp;
+            <b>1</b>: uniform weight (1.0) &nbsp;
+            <b>*</b>: full-graph interaction &nbsp;
+            <span style="color:var(--accent1);font-weight:bold;">Highlighted row</span>: best config
+        </div>
+
+        <div class="slide-footer-info">Page 19</div>
+    </div>
+</body>
+
+</html>
