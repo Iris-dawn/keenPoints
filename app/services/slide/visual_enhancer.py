@@ -150,7 +150,16 @@ class VisualEnhancer:
         image_prompt = decision["image_prompt"]
 
         logger.info(f"{TAG} generating image: {image_type}")
-        img_bytes, ext = generate_image(image_prompt, aspect_ratio="4:3")
+        img_bytes, ext = generate_image(
+            image_prompt, 
+            aspect_ratio="4:3",
+            metadata={
+                "step": 6,
+                "slide_id": slide.get("slide_id"),
+                "slide_title": slide.get("slide_title"),
+                "image_type": image_type,
+            }
+        )
 
         self.images_dir.mkdir(parents=True, exist_ok=True)
         slug = re.sub(r"[\W]+", "_", slide.get("slide_title", "slide"))[:32].lower()
@@ -172,7 +181,15 @@ class VisualEnhancer:
                "; ".join(slide.get("content_points", [])[:3])
         rw_prompt = _build_rewrite_prompt(slide, image_type, desc)
         logger.info(f"{TAG} rewriting bullets")
-        rw_result = self.client.run(settings.LLM_ID_TEXT_REWRITE, rw_prompt, tag="text_rewrite")
+        rw_result = self.client.run(
+            settings.LLM_ID_TEXT_REWRITE, rw_prompt, 
+            tag="text_rewrite",
+            metadata={
+                "step": 6,
+                "slide_id": slide.get("slide_id"),
+                "image_type": image_type,
+            }
+        )
         rewritten = _parse_rewrite_output(rw_result)
         if not rewritten:
             rewritten = slide.get("content_points", [])[:3]

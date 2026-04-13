@@ -95,6 +95,12 @@ def analyze_elements(elements: List[Dict], base_path: Optional[Path] = None) -> 
             raw = client.run(
                 settings.LLM_ID_VISUAL_ANALYSIS, prompt,
                 extra=extra, tag=f"visual_{etype}_{eid}",
+                metadata={
+                    "step": 2,
+                    "element_type": etype,
+                    "element_id": eid,
+                    "section_name": elem.get("section_name", ""),
+                }
             )
             answer = extract_json_output(raw)
             if answer:

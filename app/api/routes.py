@@ -2,6 +2,7 @@
 
 import json
 import shutil
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional, List
 
@@ -480,3 +481,97 @@ def render_single_slide(payload: dict):
     renderer = slide_renderer.SlideRenderer(template_name=template)
     out_path = renderer.render_slide(slide_data, index=payload.get("index", 0))
     return {"html_file": out_path.name}
+
+
+# ── Prompt Audit & Query ─────────────────────────────────────────────────────
+
+@router.get("/prompts/query")
+def query_llm_prompts(
+    paper: Optional[str] = None,
+    llm_id: Optional[int] = None,
+    step: Optional[int] = None,
+    date: Optional[str] = None,
+    tag: Optional[str] = None,
+    limit: int = 100
+):
+    """Query LLM prompt logs with filters.
+    
+    Returns list of manifests (metadata only, no full prompt content).
+    Use /prompts/detail to get full content.
+    """
+    from app.core.logger import query_prompts
+    
+    results = query_prompts(
+        paper=paper, 
+        llm_id=llm_id, 
+        step=step, 
+        date=date, 
+        tag=tag, 
+        limit=limit
+    )
+    
+    # Strip large fields for list view
+    summaries = []
+    for manifest in results:
+        summaries.append({
+            "metadata": manifest.get("metadata", {}),
+            "has_prompt": bool(manifest.get("prompt") or manifest.get("prompt_file")),
+            "has_response": bool(manifest.get("response") or manifest.get("response_file")),
+        })
+    
+    return {
+        "total": len(summaries),
+        "results": summaries,
+    }
+
+
+@router.get("/prompts/detail/{manifest_file}")
+def get_llm_prompt_detail(manifest_file: str):
+    """Get full prompt and response detail by manifest filename."""
+    from app.core.logger import get_prompt_detail
+    
+    try:
+        detail = get_prompt_detail(manifest_file)
+        return detail
+    except FileNotFoundError as e:
+        raise HTTPException(404, str(e))
+
+
+@router.get("/prompts/stats")
+def get_prompt_stats(date: Optional[str] = None):
+    """Get statistics of LLM calls.
+    
+    Returns counts by llm_id, paper, step.
+    """
+    from app.core.logger import get_prompt_stats
+    
+    stats = get_prompt_stats(date=date)
+    return stats
+
+
+@router.delete("/prompts/cleanup")
+def cleanup_old_prompts(days: int = 30):
+    """Delete prompt logs older than specified days.
+    
+    Keeps index files for historical records.
+    """
+    from app.core.config import settings
+    
+    prompt_dir = Path(settings.BASE_DIR) / settings.PROMPT_LOG_DIR
+    cutoff = datetime.now() - timedelta(days=days)
+    
+    deleted = 0
+    for f in prompt_dir.iterdir():
+        if f.is_file() and not f.name.startswith("index_"):
+            # Extract timestamp from filename
+            try:
+                ts_str = f.stem.split("_")[0]
+                file_time = datetime.strptime(ts_str, "%Y%m%d")
+                if file_time < cutoff:
+                    f.unlink()
+                    deleted += 1
+            except (ValueError, IndexError):
+                continue
+    
+    return {"deleted_files": deleted, "cutoff_date": cutoff.isoformat()}
+

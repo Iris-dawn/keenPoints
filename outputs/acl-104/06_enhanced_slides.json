@@ -136,12 +136,21 @@
       "role": "insight_thesis",
       "slide_purpose": "Present the key insight and contributions of the proposed Hi-AGM model.",
       "content_points": [
-        "Formulate the hierarchy as a directed graph with prior probabilities of label dependencies.",
-        "Introduce Hi-AGM with hierarchy-aware structure encoders (TreeLSTM or hierarchy-GCN).",
-        "Two variants: HiAGM-LA (inductive) and HiAGM-TP (deductive) for feature aggregation."
+        "By encoding label dependencies as edge-weighted directed graphs, Hi-AGM captures structural priors that flat classifiers fundamentally ignore.",
+        "The inductive (LA) and deductive (TP) variants offer a flexible trade-off between inference efficiency and feature propagation depth across the label hierarchy."
       ],
       "visual_refs": {
-        "images": [],
+        "images": [
+          {
+            "type": "image",
+            "id": 1,
+            "img_path": "generated_images/slide05_Proposed_Solution_HiAGM.png",
+            "img_src_prefix": "generated_images",
+            "caption": "",
+            "analysis_text": "AI-generated framework_diagram covering: Formulate the hierarchy as a directed graph with prior probabilities of label dependencies.; Introduce Hi-AGM with hierarchy-aware structure encoders (TreeLSTM or hierarchy-GCN).; Two variants: HiAGM-LA (inductive) and HiAGM-TP (deductive) for feature aggregation.",
+            "generated": true
+          }
+        ],
         "tables": [],
         "equations": []
       },
@@ -149,7 +158,7 @@
         "strategy": "image",
         "image_type": "framework_diagram",
         "image_prompt": "TASK: Generate a schematic diagram for an academic presentation slide.\n\nSLIDE TITLE   : Proposed Solution: Hi-AGM\nSLIDE PURPOSE : Present the key insight and contributions of the proposed Hi-AGM model.\nSLIDE ROLE    : insight_thesis\nKEY CONCEPTS  : Formulate the hierarchy as a directed graph with prior probabilities of label dependencies.; Introduce Hi-AGM with hierarchy-aware structure encoders (TreeLSTM or hierarchy-GCN).; Two variants: HiAGM-LA (inductive) and HiAGM-TP (deductive) for feature aggregation.\n\nREQUIREMENTS:\n- Clean academic style; white or light grey background (#F9FAFB)\n- Flat vector design; BIT palette: Primary #2B4663, Secondary #5C7885, Accent #B9CAE1\n- No photographs — use geometric shapes, arrows, labels, nodes\n- Canvas: 480×420 px (embedded in 960×540 slide)\n- English labels only, ≤5 words per node\n- Visual type: framework_diagram\n\nModular block diagram with input→process→output flow.\n\nOUTPUT: Return ONLY the image.",
-        "generated": false
+        "generated": true
       }
     },
     {

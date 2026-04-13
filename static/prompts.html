@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeenPoint - Prompt 日志查询</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2B4663 0%, #5C7885 100%);
+            color: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #2B4663;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #2B4663;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1f3347;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2B4663;
+        }
+
+        .stat-detail {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .results-count {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .results-table-wrapper {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .results-table thead {
+            background: #f8f9fa;
+        }
+
+        .results-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .results-table tbody tr:hover {
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-step {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-llm {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .badge-tag {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+        }
+
+        .close-btn {
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .detail-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detail-item value {
+            display: block;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .copy-btn {
+            padding: 6px 12px;
+            background: #2B4663;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #1f3347;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-table {
+                font-size: 12px;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Prompt 日志查询系统</h1>
+            <p>KeenPoint 论文转 PPT 流程中的所有 LLM 调用追溯与审计</p>
+        </header>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>总调用次数</h3>
+                <div class="stat-value" id="totalCalls">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>当前论文</h3>
+                <div class="stat-value" id="currentPaper" style="font-size: 24px;">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>最活跃的步骤</h3>
+                <div class="stat-value" id="topStep">-</div>
+                <div class="stat-detail" id="topStepDetail"></div>
+            </div>
+            <div class="stat-card">
+                <h3>最近调用时间</h3>
+                <div class="stat-value" id="lastCallTime" style="font-size: 20px;">-</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>论文名称</label>
+                    <input type="text" id="filterPaper" placeholder="输入论文名称...">
+                </div>
+                <div class="filter-group">
+                    <label>LLM ID</label>
+                    <select id="filterLlmId">
+                        <option value="">全部</option>
+                        <option value="2">2 - 视觉分析</option>
+                        <option value="3">3 - 大纲生成</option>
+                        <option value="4">4 - HTML生成</option>
+                        <option value="5">5 - 图片生成</option>
+                        <option value="6">6 - 文本重写</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>流程步骤</label>
+                    <select id="filterStep">
+                        <option value="">全部</option>
+                        <option value="1">Step 1 - 文档解析</option>
+                        <option value="2">Step 2 - 视觉分析</option>
+                        <option value="3">Step 3 - 大纲生成</option>
+                        <option value="4">Step 4 - 幻灯片池构建</option>
+                        <option value="5">Step 5 - 叙事重排</option>
+                        <option value="6">Step 6 - 视觉增强</option>
+                        <option value="7">Step 7 - HTML渲染</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>日期</label>
+                    <input type="date" id="filterDate">
+                </div>
+                <div class="filter-group">
+                    <label>标签</label>
+                    <input type="text" id="filterTag" placeholder="输入标签关键字...">
+                </div>
+            </div>
+            <div class="filter-row">
+                <button class="btn btn-primary" onclick="loadPrompts()">🔍 查询</button>
+                <button class="btn btn-secondary" onclick="clearFilters()">清空筛选</button>
+                <button class="btn btn-secondary" onclick="loadStats()">刷新统计</button>
+            </div>
+        </div>
+
+        <div class="results-header">
+            <div class="results-count">
+                共找到 <strong id="resultCount">0</strong> 条记录
+            </div>
+        </div>
+
+        <div class="results-table-wrapper">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th style="width: 140px;">时间</th>
+                        <th style="width: 120px;">论文</th>
+                        <th style="width: 80px;">步骤</th>
+                        <th style="width: 80px;">LLM ID</th>
+                        <th style="width: 150px;">标签</th>
+                        <th style="width: 80px;">Prompt</th>
+                        <th style="width: 80px;">Response</th>
+                        <th style="width: 100px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                    <tr>
+                        <td colspan="9" class="loading">加载中...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for detail view -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Prompt 详情</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid" id="detailMetadata"></div>
+                
+                <div class="section-title">
+                    📝 Prompt 内容
+                    <button class="copy-btn" onclick="copyPrompt()">复制</button>
+                </div>
+                <div class="code-block">
+                    <pre id="promptContent">-</pre>
+                </div>
+
+                <div class="section-title" style="margin-top: 25px;">
+                    ✅ Response 结果
+                    <button class="copy-btn" onclick="copyResponse()">复制</button>
+                </div>
+                <div class="code-block">
+                    <pre id="responseContent">-</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentDetail = null;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadPrompts();
+        });
+
+        // 加载统计数据
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/prompts/stats`);
+                const data = await response.json();
+                
+                const stats = data.statistics;
+                document.getElementById('totalCalls').textContent = stats.total_calls;
+                
+                // 找到最活跃的步骤
+                const stepCounts = stats.by_step;
+                let topStep = '-';
+                let topCount = 0;
+                for (const [step, count] of Object.entries(stepCounts)) {
+                    if (count > topCount) {
+                        topCount = count;
+                        topStep = step;
+                    }
+                }
+                document.getElementById('topStep').textContent = topStep !== '-' ? `Step ${topStep}` : '-';
+                document.getElementById('topStepDetail').textContent = topCount > 0 ? `${topCount} 次调用` : '';
+
+                // 获取当前论文
+                const papersResponse = await fetch(`${API_BASE}/papers`);
+                const papersData = await papersResponse.json();
+                document.getElementById('currentPaper').textContent = papersData.current || '未设置';
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+            }
+        }
+
+        // 加载 prompts 列表
+        async function loadPrompts() {
+            const params = new URLSearchParams();
+            
+            const paper = document.getElementById('filterPaper').value;
+            const llmId = document.getElementById('filterLlmId').value;
+            const step = document.getElementById('filterStep').value;
+            const date = document.getElementById('filterDate').value;
+            const tag = document.getElementById('filterTag').value;
+
+            if (paper) params.append('paper', paper);
+            if (llmId) params.append('llm_id', llmId);
+            if (step) params.append('step', step);
+            if (date) params.append('date', date);
+            if (tag) params.append('tag', tag);
+            params.append('limit', 200);
+
+            try {
+                const response = await fetch(`${API_BASE}/prompts/query?${params}`);
+                const data = await response.json();
+                
+                const tbody = document.getElementById('resultsBody');
+                document.getElementById('resultCount').textContent = data.total;
+
+                if (data.total === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="9">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📭</div>
+                                    <p>没有找到匹配的记录</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = data.results.map((item, index) => {
+                    const meta = item.metadata;
+                    const timestamp = formatTimestamp(meta.timestamp);
+                    
+                    return `
+                        <tr onclick="loadDetail('${meta.manifest_file || `${meta.timestamp}_llm${meta.llm_id}_${meta.tag}_manifest.json`}')">
+                            <td>${index + 1}</td>
+                            <td>${timestamp}</td>
+                            <td>${meta.paper || '-'}</td>
+                            <td><span class="badge badge-step">Step ${meta.step || '-'}</span></td>
+                            <td><span class="badge badge-llm">LLM ${meta.llm_id}</span></td>
+                            <td><span class="badge badge-tag">${meta.tag || '-'}</span></td>
+                            <td>${item.has_prompt ? '✅' : '❌'}</td>
+                            <td>${item.has_response ? '✅' : '❌'}</td>
+                            <td><button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">查看</button></td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('加载 prompts 失败:', error);
+                document.getElementById('resultsBody').innerHTML = `
+                    <tr>
+                        <td colspan="9" class="empty-state">
+                            <div class="empty-state-icon">⚠️</div>
+                            <p>加载失败: ${error.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // 加载详情
+        async function loadDetail(manifestFile) {
+            try {
+                const response = await fetch(`${API_BASE}/prompts/detail/${manifestFile}`);
+                const data = await response.json();
+                currentDetail = data;
+
+                // 渲染元数据
+                const meta = data.metadata;
+                const metaHtml = `
+                    <div class="detail-item">
+                        <label>时间戳</label>
+                        <value>${meta.timestamp || '-'}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>论文</label>
+                        <value>${meta.paper || '-'}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>步骤</label>
+                        <value>Step ${meta.step || '-'}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>LLM ID</label>
+                        <value>${meta.llm_id || '-'}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>标签</label>
+                        <value>${meta.tag || '-'}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>幻灯片 ID</label>
+                        <value>${meta.slide_id || '-'}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>幻灯片标题</label>
+                        <value>${meta.slide_title || '-'}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>章节</label>
+                        <value>${meta.section_name || '-'}</value>
+                    </div>
+                `;
+                document.getElementById('detailMetadata').innerHTML = metaHtml;
+
+                // 渲染 prompt
+                let promptText = data.prompt || '(无 prompt 内容)';
+                try {
+                    const promptJson = JSON.parse(promptText);
+                    promptText = JSON.stringify(promptJson, null, 2);
+                } catch (e) {
+                    // 不是 JSON，保持原样
+                }
+                document.getElementById('promptContent').textContent = promptText;
+
+                // 渲染 response
+                let responseText = data.response || '(无 response 内容)';
+                if (typeof responseText === 'object') {
+                    responseText = JSON.stringify(responseText, null, 2);
+                }
+                document.getElementById('responseContent').textContent = responseText;
+
+                // 显示 modal
+                document.getElementById('detailModal').classList.add('active');
+            } catch (error) {
+                alert('加载详情失败: ' + error.message);
+            }
+        }
+
+        // 关闭 modal
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // 点击 modal 外部关闭
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailModal') {
+                closeModal();
+            }
+        });
+
+        // 清空筛选
+        function clearFilters() {
+            document.getElementById('filterPaper').value = '';
+            document.getElementById('filterLlmId').value = '';
+            document.getElementById('filterStep').value = '';
+            document.getElementById('filterDate').value = '';
+            document.getElementById('filterTag').value = '';
+            loadPrompts();
+        }
+
+        // 复制 prompt
+        function copyPrompt() {
+            const text = document.getElementById('promptContent').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Prompt 已复制到剪贴板');
+            });
+        }
+
+        // 复制 response
+        function copyResponse() {
+            const text = document.getElementById('responseContent').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Response 已复制到剪贴板');
+            });
+        }
+
+        // 格式化时间戳
+        function formatTimestamp(ts) {
+            if (!ts) return '-';
+            // 格式: 20240115_143052_123456
+            const parts = ts.split('_');
+            if (parts.length >= 2) {
+                const date = parts[0];
+                const time = parts[1];
+                return `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)} ${time.slice(0, 2)}:${time.slice(2, 4)}:${time.slice(4, 6)}`;
+            }
+            return ts;
+        }
+
+        // ESC 键关闭 modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

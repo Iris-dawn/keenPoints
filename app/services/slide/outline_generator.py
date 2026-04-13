@@ -32,7 +32,14 @@ def generate(parse_result: Dict, visual_analysis: List[Dict]) -> Dict:
         logger.info(f"{TAG} [{idx}/{total}] {name[:40]}")
         try:
             query = json.dumps(data, ensure_ascii=False)
-            raw = client.run(settings.LLM_ID_OUTLINE, query, tag=f"outline_{idx}")
+            raw = client.run(
+                settings.LLM_ID_OUTLINE, query, 
+                tag=f"outline_{idx}",
+                metadata={
+                    "step": 3,
+                    "section_name": name,
+                }
+            )
             raw_result = extract_json_output(raw)
             results.append({"section_name": name, "raw_result": raw_result})
         except Exception as e:

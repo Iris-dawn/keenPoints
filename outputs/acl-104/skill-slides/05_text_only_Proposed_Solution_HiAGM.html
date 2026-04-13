@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
     <meta charset="utf-8">
-    <title>Benchmark Datasets</title>
+    <title>Proposed Solution: Hi-AGM</title>
     <style>
         :root {
             --dk1: #000000;
@@ -108,110 +108,83 @@
             z-index: 10;
         }
 
-        /* Bullets strip at top */
-        .bullets-area {
+        .content-area {
             position: absolute;
             left: 35px;
             right: 35px;
             top: 72px;
+            bottom: 47px;
             display: flex;
-            gap: 8px;
+            gap: 12px;
+            align-items: stretch;
             z-index: 5;
         }
 
-        .bullet-chip {
+        .card {
             flex: 1;
-            background: var(--dk2);
             border: 1px solid var(--accent4);
-            border-radius: 5px;
-            padding: 6px 10px;
-            font-size: 11.5px;
-            line-height: 1.45;
-            color: var(--accent6);
+            border-radius: 6px;
+            background: #fff;
             display: flex;
-            gap: 7px;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--accent1);
+            color: var(--lt1);
+            padding: 8px 14px;
+            font-size: 12.5px;
+            font-weight: bold;
+        }
+
+        .card-body {
+            flex: 1;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .point {
+            display: flex;
+            gap: 9px;
             align-items: flex-start;
         }
 
-        .bullet-chip .dot {
-            width: 6px;
-            height: 6px;
+        .point .dot {
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: var(--accent1);
-            margin-top: 4px;
+            margin-top: 5px;
             flex-shrink: 0;
         }
 
-        .bullet-chip b {
-            color: var(--accent1);
-        }
-
-        /* Table area */
-        .table-wrapper {
-            position: absolute;
-            left: 35px;
-            right: 35px;
-            top: 165px;
-            bottom: 47px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 5;
-        }
-
-        table.result-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        table.result-table thead tr:first-child th {
-            background: var(--accent1);
-            color: var(--lt1);
-            padding: 10px 14px;
-            text-align: center;
-            font-weight: bold;
+        .point p {
+            margin: 0;
             font-size: 13px;
-        }
-
-        table.result-table thead tr:nth-child(2) th {
-            background: var(--accent2);
-            color: var(--lt1);
-            padding: 8px 14px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 12.5px;
-        }
-
-        table.result-table tbody tr {
-            border-bottom: 1px solid var(--accent4);
-        }
-
-        table.result-table tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        table.result-table tbody td {
-            padding: 11px 14px;
-            text-align: center;
+            line-height: 1.55;
             color: var(--dk1);
-            font-size: 14px;
         }
 
-        table.result-table tbody tr:nth-child(even) td {
-            background: var(--dk2);
-        }
-
-        table.result-table tbody td:first-child {
-            font-weight: bold;
+        .point p em {
             color: var(--accent1);
-            text-align: left;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .sep {
+            height: 1px;
+            background: var(--dk2);
+            margin: 2px 0;
         }
     </style>
 </head>
 
 <body>
     <div class="slide">
+
         <!-- Decoration -->
         <svg xmlns="http://www.w3.org/2000/svg"
             style="position:absolute;left:-0.7px;top:9.6px;width:44.1px;height:55.1px;overflow:visible;">
@@ -234,78 +207,81 @@
             <img src="校训.svg" alt="校训" class="img-fit" style="object-position:left bottom;">
         </div>
 
-        <div class="slide-section">10</div>
+        <!-- Header -->
+        <div class="slide-section">5</div>
         <div class="slide-title">
-            <h1>Benchmark Datasets</h1>
+            <h1>Proposed Solution: Hi-AGM</h1>
         </div>
 
-        <!-- Bullet chips -->
-        <div class="bullets-area">
-            <div class="bullet-chip">
-                <div class="dot"></div>
-                <div>Three benchmarks: <b>RCV1-V2</b> (news), <b>WOS</b> (academic), <b>NYT</b> (news)</div>
+        <!-- Three-column card content -->
+        <div class="content-area">
+
+            <!-- Card 1: Graph-Based Hierarchy -->
+            <div class="card">
+                <div class="card-header">Graph-Based Hierarchy</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Formulate the hierarchy as a <em>directed graph</em> with <em>prior probabilities</em> of label dependencies</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Edge weights encode <em>top-down</em> and <em>bottom-up</em> conditional probabilities derived from training corpus</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Captures <em>fine-grained label correlations</em> across the entire taxonomy</p>
+                    </div>
+                </div>
             </div>
-            <div class="bullet-chip">
-                <div class="dot"></div>
-                <div>All annotated with <b>hierarchical taxonomic labels</b></div>
+
+            <!-- Card 2: Structure Encoders -->
+            <div class="card">
+                <div class="card-header">Hierarchy-Aware Structure Encoders</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Introduce <em>Hi-AGM</em> with dedicated <em>hierarchy-aware structure encoders</em></p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p><em>TreeLSTM</em>: bidirectional Tree-LSTM operating top-down and bottom-up through the hierarchy</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p><em>Hierarchy-GCN</em>: graph convolutional network with gated aggregation over directed edges</p>
+                    </div>
+                </div>
             </div>
-            <div class="bullet-chip">
-                <div class="dot"></div>
-                <div><b>WOS</b>: single-path HTC; <b>RCV1</b> & <b>NYT</b>: multi-path tags</div>
+
+            <!-- Card 3: Two Variants -->
+            <div class="card">
+                <div class="card-header">Two Model Variants</div>
+                <div class="card-body">
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p><em>HiAGM-LA</em> (inductive): multi-label attention extracts label-wise text features using hierarchy-aware label embeddings</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p><em>HiAGM-TP</em> (deductive): propagates text features directly through the hierarchy via structure encoder</p>
+                    </div>
+                    <div class="sep"></div>
+                    <div class="point">
+                        <div class="dot"></div>
+                        <p>Both variants aggregate <em>hierarchy-aware features</em> for final multi-label classification</p>
+                    </div>
+                </div>
             </div>
-            <div class="bullet-chip">
-                <div class="dot"></div>
-                <div>Benchmark split for RCV1-V2; random splits for WOS and NYT</div>
-            </div>
+
         </div>
 
-        <!-- Table -->
-        <div class="table-wrapper">
-            <table class="result-table">
-                <thead>
-                    <tr>
-                        <th>Dataset</th>
-                        <th>|L|</th>
-                        <th>Depth</th>
-                        <th>Avg(|L<sub>i</sub>|)</th>
-                        <th>Train</th>
-                        <th>Val</th>
-                        <th>Test</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>RCV1</td>
-                        <td>103</td>
-                        <td>4</td>
-                        <td>3.24</td>
-                        <td>20,833</td>
-                        <td>2,316</td>
-                        <td>781,265</td>
-                    </tr>
-                    <tr>
-                        <td>WOS</td>
-                        <td>141</td>
-                        <td>2</td>
-                        <td>2.0</td>
-                        <td>30,070</td>
-                        <td>7,518</td>
-                        <td>9,397</td>
-                    </tr>
-                    <tr>
-                        <td>NYT</td>
-                        <td>166</td>
-                        <td>8</td>
-                        <td>7.6</td>
-                        <td>23,345</td>
-                        <td>5,834</td>
-                        <td>7,292</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="slide-footer-info">Page 15</div>
+        <div class="slide-footer-info">Page 5</div>
     </div>
 </body>
 

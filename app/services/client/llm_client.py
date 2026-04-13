@@ -78,8 +78,17 @@ class DifyClient:
         return results
 
     def run(self, llm_id: int, prompt: str, extra: Dict = None,
-            timeout: int = 600, tag: str = "") -> Dict:
-        """Execute a Dify workflow (streaming). Every call is logged."""
+            timeout: int = 600, tag: str = "", metadata: Optional[Dict] = None) -> Dict:
+        """Execute a Dify workflow (streaming). Every call is logged.
+        
+        Args:
+            llm_id: Dify workflow ID
+            prompt: User prompt string
+            extra: Additional inputs to the workflow
+            timeout: Request timeout in seconds
+            tag: Custom tag for identification
+            metadata: Additional context for logging (paper, step, slide_id, etc.)
+        """
         inputs = {"llm_id": llm_id, "user_prompt": prompt}
         if extra:
             inputs.update(extra)
@@ -87,7 +96,7 @@ class DifyClient:
         logger.info(f"[LLM] run llm_id={llm_id} prompt_len={len(prompt)}")
 
         result = self._stream(payload, timeout)
-        log_llm_call(llm_id, prompt, result, tag=tag)
+        log_llm_call(llm_id, prompt, result, tag=tag, metadata=metadata)
         return result
 
     def _stream(self, payload: Dict, timeout: int) -> Dict:
@@ -215,14 +224,19 @@ def _try_parse_json(text: str) -> Optional[Any]:
 
 # ── Gemini image generation ───────────────────────────────────────────────────
 
-def generate_image(prompt: str, aspect_ratio: str = "4:3") -> tuple:
+def generate_image(prompt: str, aspect_ratio: str = "4:3", metadata: Optional[Dict] = None) -> tuple:
     """Generate an image via Gemini/AiHubMix. Returns (bytes, extension)."""
     if genai is None or genai_types is None:
         raise ImportError("google-genai required for image generation")
     if not settings.AIHUBMIX_API_KEY:
         raise ValueError("AIHUBMIX_API_KEY not configured")
 
-    log_llm_call(settings.LLM_ID_IMAGE_GEN, prompt, tag="gemini_image")
+    # Add step 6 marker for image generation
+    meta = metadata or {}
+    meta.setdefault("step", 6)
+    meta.setdefault("llm_type", "gemini_image")
+    
+    log_llm_call(settings.LLM_ID_IMAGE_GEN, prompt, tag="gemini_image", metadata=meta)
 
     client = genai.Client(
         api_key=settings.AIHUBMIX_API_KEY,

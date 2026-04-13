@@ -207,6 +207,13 @@ class SlideRenderer:
                 result = self.client.run(
                     settings.LLM_ID_SLIDE_GEN, prompt,
                     tag=f"slide_{index:02d}_{layout}_{slug}",
+                    metadata={
+                        "step": 7,
+                        "slide_id": slide.get("slide_id"),
+                        "slide_title": slide.get("slide_title"),
+                        "layout": layout,
+                        "section_name": slide.get("section_name", ""),
+                    }
                 )
                 html_text = extract_html_output(result)
                 break
