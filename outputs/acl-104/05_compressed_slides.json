@@ -46,6 +46,24 @@
     },
     {
       "slide_id": 2,
+      "slide_title": "Hierarchical Text Classification Overview",
+      "section_name": "3 Problem Definition",
+      "role": "problem_definition",
+      "slide_purpose": "Introduce the concept and structure of hierarchical text classification",
+      "content_points": [
+        "Hierarchical text classification (HTC) organizes labels with a predefined taxonomic hierarchy",
+        "Hierarchy groups label subsets based on class relations",
+        "Taxonomic hierarchy can be tree-like or DAG structure",
+        "DAG can be converted to tree-like structure by distinguishing single-path nodes"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 3,
       "slide_title": "Hierarchical Structure Illustration",
       "section_name": "2 Related Work",
       "role": "related_work",
@@ -71,7 +89,25 @@
       }
     },
     {
-      "slide_id": 3,
+      "slide_id": 4,
+      "slide_title": "Categories of Existing Approaches",
+      "section_name": "2 Related Work",
+      "role": "related_work",
+      "slide_purpose": "To categorize and explain existing approaches in hierarchical text classification",
+      "content_points": [
+        "Local approaches: LCN, LCPN, LCL",
+        "Global approaches: modifications of flat MLC models",
+        "Deep learning architectures in global models",
+        "Attention mechanism in MLC"
+      ],
+      "visual_refs": {
+        "images": [],
+        "tables": [],
+        "equations": []
+      }
+    },
+    {
+      "slide_id": 5,
       "slide_title": "Proposed Solution: Hi-AGM",
       "section_name": "1 Introduction",
       "role": "insight_thesis",
@@ -88,7 +124,7 @@
       }
     },
     {
-      "slide_id": 4,
+      "slide_id": 6,
       "slide_title": "HiAGM Architecture Overview",
       "section_name": "4.1 Prior Hierarchy Information",
       "role": "overview_figure",
@@ -114,7 +150,7 @@
       }
     },
     {
-      "slide_id": 5,
+      "slide_id": 7,
       "slide_title": "HiAGM Model Overview",
       "section_name": "4.3 Hybrid Information Aggregation",
       "role": "method_overview",
@@ -133,7 +169,7 @@
       }
     },
     {
-      "slide_id": 6,
+      "slide_id": 8,
       "slide_title": "Bayesian Approach to Hierarchy Encoding",
       "section_name": "4.1 Prior Hierarchy Information",
       "role": "method_component",
@@ -160,7 +196,7 @@
       }
     },
     {
-      "slide_id": 7,
+      "slide_id": 9,
       "slide_title": "Bidirectional Tree-LSTM Architecture",
       "section_name": "4.2 Hierarchy-Aware Structure Encoder",
       "role": "method_component",
@@ -211,7 +247,7 @@
       }
     },
     {
-      "slide_id": 8,
+      "slide_id": 10,
       "slide_title": "Hierarchy-GCN Mechanism",
       "section_name": "4.2 Hierarchy-Aware Structure Encoder",
       "role": "method_component",
@@ -254,7 +290,7 @@
       }
     },
     {
-      "slide_id": 9,
+      "slide_id": 11,
       "slide_title": "HiAGM-LA: Multi-Label Attention Variant",
       "section_name": "4.3 Hybrid Information Aggregation",
       "role": "method_component",
@@ -282,7 +318,7 @@
       }
     },
     {
-      "slide_id": 10,
+      "slide_id": 12,
       "slide_title": "HiAGM-TP: Text Feature Propagation",
       "section_name": "4.3 Hybrid Information Aggregation",
       "role": "method_component",
@@ -310,7 +346,7 @@
       }
     },
     {
-      "slide_id": 11,
+      "slide_id": 13,
       "slide_title": "Hierarchy Encoding Equations",
       "section_name": "4.2 Hierarchy-Aware Structure Encoder",
       "role": "theoretical",
@@ -353,7 +389,7 @@
       }
     },
     {
-      "slide_id": 12,
+      "slide_id": 14,
       "slide_title": "Datasets Overview",
       "section_name": "5.1 Experiment Setup",
       "role": "experiment_setup",
@@ -381,7 +417,7 @@
       }
     },
     {
-      "slide_id": 13,
+      "slide_id": 15,
       "slide_title": "Performance Comparison on RCV1-V2",
       "section_name": "5.2 Comparison",
       "role": "results",
@@ -408,7 +444,7 @@
       }
     },
     {
-      "slide_id": 14,
+      "slide_id": 16,
       "slide_title": "Performance Comparison of HiAGM Variants",
       "section_name": "5.3 Analysis",
       "role": "results",
@@ -435,7 +471,7 @@
       }
     },
     {
-      "slide_id": 15,
+      "slide_id": 17,
       "slide_title": "Level-based Performance Improvement",
       "section_name": "5.3 Analysis",
       "role": "results",
@@ -461,7 +497,7 @@
       }
     },
     {
-      "slide_id": 16,
+      "slide_id": 18,
       "slide_title": "Prior Probability Analysis",
       "section_name": "5.3 Analysis",
       "role": "analysis_ablation",
@@ -488,7 +524,7 @@
       }
     },
     {
-      "slide_id": 17,
+      "slide_id": 19,
       "slide_title": "Impact of GCN Layers",
       "section_name": "5.3 Analysis",
       "role": "analysis_ablation",
@@ -514,7 +550,7 @@
       }
     },
     {
-      "slide_id": 18,
+      "slide_id": 20,
       "slide_title": "Key Contributions",
       "section_name": "6 Conclusion",
       "role": "takeaways",
@@ -534,6 +570,6 @@
     }
   ],
   "statistics": {
-    "total_slides": 19
+    "total_slides": 21
   }
 }

@@ -28,7 +28,10 @@ def create_app() -> FastAPI:
 
     app.include_router(router, prefix="/api")
 
-    # Static file mounts
+    # Static file mounts (create dirs if missing to avoid startup crash)
+    import os as _os
+    for _d in ("static", "outputs", "uploads", "downloads"):
+        _os.makedirs(_d, exist_ok=True)
     app.mount("/static", StaticFiles(directory="static"), name="static")
     app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
     app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

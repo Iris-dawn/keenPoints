@@ -204,7 +204,11 @@ def reorder(target_slides: int = 21):
 
 @router.post("/visual/enhance")
 def enhance_visual():
-    """Step 6a — Classify slides and write strategy fields (no image generation)."""
+    """Step 6a — Classify slides and write strategy fields (no image generation).
+
+    Returns full slide list with visual_enhance info (including image_prompt for
+    image-strategy slides) so the frontend can display prompts before generation.
+    """
     comp_path = get_output_path(OUTPUT_FILES["compressed_slides"])
     if not comp_path.exists():
         raise HTTPException(400, "Run /narrative/reorder first")
@@ -214,17 +218,31 @@ def enhance_visual():
     report = result.get("report", {})
     counts = {"image": 0, "css": 0, "skip": 0}
     for v in report.values():
-        counts[v.get("strategy", "skip")] = counts.get(v.get("strategy", "skip"), 0) + 1
+        k = v.get("strategy", "skip")
+        counts[k] = counts.get(k, 0) + 1
+
+    # Build a compact per-slide summary for the frontend
+    slide_summary = [
+        {
+            "slide_id": s.get("slide_id"),
+            "slide_title": s.get("slide_title", ""),
+            "role": s.get("role", ""),
+            "visual_enhance": s.get("visual_enhance", {}),
+        }
+        for s in slides
+    ]
+
     return {
         "slides": len(slides),
         "strategy_counts": counts,
+        "slide_summary": slide_summary,
         "output": OUTPUT_FILES["enhanced_slides"],
     }
 
 
 @router.post("/visual/enhance/images")
 def enhance_images(slide_ids: Optional[str] = None, delay: float = 1.5):
-    """Step 6b (optional) — Generate AI images for image-strategy slides.
+    """Step 6b — Generate AI images for image-strategy slides.
 
     slide_ids: optional comma-separated list of slide_id integers to process.
                If omitted, all un-generated image-strategy slides are processed.
@@ -244,6 +262,31 @@ def enhance_images(slide_ids: Optional[str] = None, delay: float = 1.5):
     return {
         "generated": result.get("generated", 0),
         "report": result.get("report", {}),
+        "output": OUTPUT_FILES["enhanced_slides"],
+    }
+
+
+@router.post("/visual/enhance/single/{slide_id}")
+def enhance_single_image(slide_id: int, delay: float = 1.5):
+    """Step 6b (single) — Generate AI image for one specific slide by slide_id.
+
+    Convenience endpoint to trigger generation for exactly one slide.
+    """
+    enhanced_path = get_output_path(OUTPUT_FILES["enhanced_slides"])
+    if not enhanced_path.exists():
+        raise HTTPException(400, "Run /visual/enhance (strategy) first")
+
+    result = visual_enhancer.run_images(slide_ids=[slide_id], delay=delay)
+    report = result.get("report", {})
+    slide_report = report.get(slide_id, {})
+
+    if not slide_report.get("ok"):
+        raise HTTPException(500, f"Image generation failed: {slide_report.get('error', 'unknown error')}")
+
+    return {
+        "slide_id": slide_id,
+        "generated": True,
+        "img_path": slide_report.get("img_path", ""),
         "output": OUTPUT_FILES["enhanced_slides"],
     }
 

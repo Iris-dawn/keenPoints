@@ -90,7 +90,14 @@ class VisualEnhancer:
             Path(settings.BASE_DIR) / settings.SLIDE_GENERATED_IMAGES_DIR
         self.images_src_prefix = images_src_prefix or settings.SLIDE_IMAGE_SRC_PREFIX or \
             str(self.images_dir).replace("\\", "/")
-        self.client = get_client()
+        self._client = None  # lazy-loaded; only needed for image generation / text rewrite
+
+    @property
+    def client(self):
+        """Lazily initialise the LLM client only when image generation is needed."""
+        if self._client is None:
+            self._client = get_client()
+        return self._client
 
     def run(self, slide_ids: Optional[list[int]] = None, dry_run: bool = False,
             delay: float = 2.0) -> dict:
